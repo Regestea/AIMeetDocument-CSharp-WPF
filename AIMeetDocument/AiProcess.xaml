@@ -1,0 +1,57 @@
+﻿<UserControl x:Class="AIMeetDocument.AiProcess"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="400">
+    <Border CornerRadius="16" Background="#22242A" Padding="24" Margin="16" Effect="{DynamicResource ShadowEffect}">
+        <StackPanel>
+            <!-- File Name Display -->
+            <TextBlock x:Name="FileNameText" Text="FileName.txt" FontSize="20" FontWeight="Bold" Foreground="#FCE49C" Margin="0,0,0,16"/>
+
+            <!-- Language Selection -->
+            <TextBlock Text="Language" Foreground="#FFD600" FontWeight="SemiBold"/>
+            <ComboBox x:Name="LanguageCombo" SelectedIndex="0" Margin="0,4,0,16" Height="32">
+                <ComboBoxItem Content="English" Tag="en"/>
+                <ComboBoxItem Content="Persian" Tag="fa"/>
+                <ComboBoxItem Content="Arabic" Tag="ar"/>
+                <ComboBoxItem Content="Chinese" Tag="zh"/>
+                <ComboBoxItem Content="French" Tag="fr"/>
+                <ComboBoxItem Content="German" Tag="de"/>
+                <ComboBoxItem Content="Hindi" Tag="hi"/>
+                <ComboBoxItem Content="Italian" Tag="it"/>
+                <ComboBoxItem Content="Japanese" Tag="ja"/>
+                <ComboBoxItem Content="Korean" Tag="ko"/>
+                <ComboBoxItem Content="Russian" Tag="ru"/>
+                <ComboBoxItem Content="Spanish" Tag="es"/>
+                <ComboBoxItem Content="Turkish" Tag="tr"/>
+            </ComboBox>
+
+            <!-- File Type Selection -->
+            <TextBlock Text="File Type" Foreground="#FFD600" FontWeight="SemiBold"/>
+            <ComboBox x:Name="FileTypeCombo" SelectedIndex="0" Margin="0,4,0,16" Height="32">
+                <ComboBoxItem Content="Word"/>
+                <ComboBoxItem Content="PDF"/>
+                <ComboBoxItem Content="MD"/>
+            </ComboBox>
+
+            <!-- Save Location -->
+            <TextBlock Text="Save Location" Foreground="#FFD600" FontWeight="SemiBold"/>
+            <DockPanel Margin="0,4,0,16">
+                <TextBox x:Name="LocationTextBox" Width="230" Height="32" VerticalAlignment="Center"/>
+                <Button x:Name="BrowseButton" Content="Browse" Width="80" Height="32" Margin="8,0,0,0"/>
+            </DockPanel>
+
+            <!-- Start Button / Loading & Cancel -->
+            <StackPanel x:Name="ActionPanel">
+                <Button x:Name="StartButton" Content="Start" Height="36" Background="#FFD600" Foreground="#22242A" FontWeight="Bold"/>
+            </StackPanel>
+            <StackPanel x:Name="LoadingPanel" Orientation="Horizontal" Visibility="Collapsed" VerticalAlignment="Center" Margin="0,8,0,0">
+                <ProgressBar IsIndeterminate="True" Width="40" Height="36"/>
+                <Button x:Name="CancelButton" Content="Cancel" Height="36" Background="#FCE49C" Foreground="#22242A" FontWeight="Bold" Margin="12,0,0,0"/>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>
+
