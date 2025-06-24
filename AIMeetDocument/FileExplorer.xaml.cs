@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using MediaDevices;
 
 namespace AIMeetDocument
@@ -46,6 +47,15 @@ namespace AIMeetDocument
                {
                    Items.Add(new DirectoryInfo(dir));
                }
+            }
+        }
+        
+        private void FilesListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (FilesListBox.SelectedItem is DirectoryInfo dir)
+            {
+                var f= FilesListBox.SelectedItem as DirectoryInfo;
+                LoadDirectory(f.ToString());
             }
         }
     }
