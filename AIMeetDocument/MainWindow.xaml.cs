@@ -112,21 +112,44 @@ public partial class MainWindow : Window
 
     private void Home_Click(object sender, RoutedEventArgs e)
     {
-        // Show Home UI, hide SettingsPanel
-        CardsPanel.Visibility = Visibility.Visible;
-        if (SettingsPanelUC != null)
-            SettingsPanelUC.Visibility = Visibility.Collapsed;
-        DevicesList.Visibility = Visibility.Collapsed;
-
-        ScanCard.Visibility = Visibility.Visible;
-        SelectFileCard.Visibility = Visibility.Visible;
+        Home();
     }
 
     private void Settings_Click(object sender, RoutedEventArgs e)
     {
         // Show SettingsPanel, hide Home UI
-        CardsPanel.Visibility = Visibility.Collapsed;
+        ClearComponents();
         if (SettingsPanelUC != null)
             SettingsPanelUC.Visibility = Visibility.Visible;
+    }
+
+    private void Home()
+    {
+        ClearComponents();
+        if (ScanCard != null)
+            ScanCard.Visibility = Visibility.Visible;
+        if (SelectFileCard != null)
+            SelectFileCard.Visibility = Visibility.Visible;
+    }
+
+    private void ClearComponents()
+    {
+        // CardsPanel.Visibility = Visibility.Visible;
+        if (SettingsPanelUC != null)
+            SettingsPanelUC.Visibility = Visibility.Collapsed;
+        if (DevicesList != null)
+        {
+            DevicesList.Visibility = Visibility.Collapsed;
+        }
+
+        if (ScanCard != null)
+        {
+            ScanCard.Visibility = Visibility.Collapsed;
+        }
+
+        if (SelectFileCard != null)
+        {
+            SelectFileCard.Visibility = Visibility.Collapsed;
+        }
     }
 }
