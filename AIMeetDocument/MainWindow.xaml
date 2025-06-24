@@ -69,31 +69,31 @@
             </Grid.Background>
             <StackPanel x:Name="CardsPanel" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
                 <!-- First Card: Scan for new drive -->
-                <Border x:Name="ScanCard" Background="#212735" CornerRadius="20" Padding="32" Margin="0,0,16,0">
+                <Border x:Name="ScanCard" Background="#212735" CornerRadius="32" Padding="64" Margin="0,0,32,0">
                     <Border.BorderBrush>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                             <GradientStop Color="#FCE49C" Offset="0.0"/>
                             <GradientStop Color="#F29D3A" Offset="1.0"/>
                         </LinearGradientBrush>
                     </Border.BorderBrush>
-                    <Border.BorderThickness>2</Border.BorderThickness>
+                    <Border.BorderThickness>3</Border.BorderThickness>
                     <StackPanel x:Name="CardContent" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <!-- Scan Animation Component -->
-                        <Grid Width="140" Height="140" HorizontalAlignment="Center" Margin="0,0,0,16">
-                            <Ellipse x:Name="ScanEllipse" Width="60" Height="60" Fill="#38435b" Opacity="0.18"/>
-                            <Ellipse Width="40" Height="40" Fill="#FCE49C"/>
-                            <Viewbox Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <Canvas Width="24" Height="24">
-                                    <Path Data="M12,2A10,10 0 1,0 22,12" Stroke="#F29D3A" StrokeThickness="2" Fill="Transparent"/>
-                                    <Ellipse Width="6" Height="6" Fill="#F29D3A" Canvas.Left="9" Canvas.Top="9"/>
+                        <Grid Width="280" Height="280" HorizontalAlignment="Center" Margin="0,0,0,32">
+                            <Ellipse x:Name="ScanEllipse" Width="120" Height="120" Fill="#38435b" Opacity="0.18"/>
+                            <Ellipse Width="80" Height="80" Fill="#FCE49C"/>
+                            <Viewbox Width="64" Height="64" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Canvas Width="48" Height="48">
+                                    <Path Data="M12,2A10,10 0 1,0 22,12" Stroke="#F29D3A" StrokeThickness="4" Fill="Transparent"/>
+                                    <Ellipse Width="12" Height="12" Fill="#F29D3A" Canvas.Left="18" Canvas.Top="18"/>
                                 </Canvas>
                             </Viewbox>
                         </Grid>
-                        <TextBlock Text="Scan for new drive" FontSize="18" Foreground="#FCE49C" HorizontalAlignment="Center" Margin="0,0,0,16"/>
-                        <Button Style="{StaticResource ModernButton}" Content="Scan Now" Click="ScanNow_Click" Cursor="Hand" BorderThickness="1">
+                        <TextBlock Text="Scan for new drive" FontSize="36" Foreground="#FCE49C" HorizontalAlignment="Center" Margin="0,0,0,32" FontWeight="Bold"/>
+                        <Button Style="{StaticResource ModernButton}" Content="Scan Now" Click="ScanNow_Click" Cursor="Hand" BorderThickness="2" FontSize="24" Height="64" Width="220">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
-                                    <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="5" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                                    <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <ControlTemplate.Triggers>
@@ -113,32 +113,32 @@
                     </StackPanel>
                 </Border>
                 <!-- Second Card: Select file manually -->
-                <Border x:Name="SelectFileCard" Background="#212735" CornerRadius="20" Padding="32" Margin="16,0,0,0">
+                <Border x:Name="SelectFileCard" Background="#212735" CornerRadius="32" Padding="64" Margin="32,0,0,0">
                     <Border.BorderBrush>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                             <GradientStop Color="#FCE49C" Offset="0.0"/>
                             <GradientStop Color="#F29D3A" Offset="1.0"/>
                         </LinearGradientBrush>
                     </Border.BorderBrush>
-                    <Border.BorderThickness>2</Border.BorderThickness>
+                    <Border.BorderThickness>3</Border.BorderThickness>
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Grid Width="140" Height="140" HorizontalAlignment="Center" Margin="0,0,0,16">
-                            <Ellipse Width="60" Height="60" Fill="#38435b" Opacity="0.18"/>
-                            <Ellipse Width="40" Height="40" Fill="#FCE49C"/>
-                            <Viewbox Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <Canvas Width="24" Height="24">
+                        <Grid Width="280" Height="280" HorizontalAlignment="Center" Margin="0,0,0,32">
+                            <Ellipse Width="120" Height="120" Fill="#38435b" Opacity="0.18"/>
+                            <Ellipse Width="80" Height="80" Fill="#FCE49C"/>
+                            <Viewbox Width="64" Height="64" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Canvas Width="48" Height="48">
                                     <!-- Music Note Icon -->
-                                    <Path Data="M6,22V6l12-2v12" Stroke="#F29D3A" StrokeThickness="2" Fill="Transparent"/>
-                                    <Ellipse Width="6" Height="6" Fill="#F29D3A" Canvas.Left="4" Canvas.Top="16"/>
-                                    <Ellipse Width="6" Height="6" Fill="#F29D3A" Canvas.Left="14" Canvas.Top="14"/>
+                                    <Path Data="M6,44V12l24-4v24" Stroke="#F29D3A" StrokeThickness="4" Fill="Transparent"/>
+                                    <Ellipse Width="12" Height="12" Fill="#F29D3A" Canvas.Left="8" Canvas.Top="32"/>
+                                    <Ellipse Width="12" Height="12" Fill="#F29D3A" Canvas.Left="28" Canvas.Top="28"/>
                                 </Canvas>
                             </Viewbox>
                         </Grid>
-                        <TextBlock Text="Select file manually" FontSize="18" Foreground="#FCE49C" HorizontalAlignment="Center" Margin="0,0,0,16"/>
-                        <Button Style="{StaticResource ModernButton}" Content="Select File" Click="SelectFile_Click" Cursor="Hand" BorderThickness="1">
+                        <TextBlock Text="Select file manually" FontSize="36" Foreground="#FCE49C" HorizontalAlignment="Center" Margin="0,0,0,32" FontWeight="Bold"/>
+                        <Button Style="{StaticResource ModernButton}" Content="Select File" Click="SelectFile_Click" Cursor="Hand" BorderThickness="2" FontSize="24" Height="64" Width="220">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
-                                    <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="5" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                                    <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <ControlTemplate.Triggers>
