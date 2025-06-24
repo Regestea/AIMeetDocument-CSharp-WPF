@@ -97,7 +97,7 @@ public partial class MainWindow : Window
             MessageBox.Show($"Selected files:\n{string.Join("\n", dlg.FileNames)}", "Files Selected");
         }
     }
-    
+
 
     private void Home_Click(object sender, RoutedEventArgs e)
     {
@@ -131,6 +131,11 @@ public partial class MainWindow : Window
             DevicesList.Visibility = Visibility.Collapsed;
         }
 
+        if (FileExplorerUC != null)
+        {
+            FileExplorerUC.Visibility = Visibility.Collapsed;
+        }
+
         if (ScanCard != null)
         {
             ScanCard.Visibility = Visibility.Collapsed;
@@ -145,8 +150,7 @@ public partial class MainWindow : Window
     public void NavigateToFileExplorer(string path)
     {
         // Hide main cards and show FileExplorer
-        CardsPanel.Visibility = Visibility.Collapsed;
-        SettingsPanelUC.Visibility = Visibility.Collapsed;
+        ClearComponents();
         FileExplorerUC.Visibility = Visibility.Visible;
         FileExplorerUC.Path = path;
     }
