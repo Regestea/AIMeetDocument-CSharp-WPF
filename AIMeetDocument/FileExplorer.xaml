@@ -48,14 +48,27 @@
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="12"/>
                         </Style>
+                        <Style TargetType="ScrollBar">
+                            <Setter Property="Width" Value="8"/>
+                            <Setter Property="Background" Value="#2a3142"/>
+                            <Setter Property="Foreground" Value="#F29D3A"/>
+                            <Setter Property="BorderBrush" Value="#F29D3A"/>
+                            <Setter Property="BorderThickness" Value="1"/>
+                            <Setter Property="VerticalAlignment" Value="Stretch"/>
+                            <Setter Property="Margin" Value="0,2,2,2"/>
+                            <Setter Property="MaxHeight" Value="272"/>
+                        </Style>
+                        <Style TargetType="Thumb">
+                            <Setter Property="Background" Value="#F29D3A"/>
+                        </Style>
                     </ListBox.Resources>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="4">
                                 <Ellipse Width="32" Height="32" Fill="#FCE49C" Opacity="0.18" VerticalAlignment="Center"/>
                                 <!-- No icon image, just a placeholder ellipse -->
-                                <TextBlock Text="📁" FontSize="18" Margin="-28,0,10,0" VerticalAlignment="Center" Visibility="{Binding Converter={StaticResource DirectoryVisibilityConverter}}"/>
-                                <TextBlock Text="📄" FontSize="18" Margin="-28,0,10,0" VerticalAlignment="Center" Visibility="{Binding Converter={StaticResource FileVisibilityConverter}}"/>
+                                <TextBlock Text="📁" FontSize="18" Margin="-28,0,10,0" VerticalAlignment="Center" Visibility="{Binding Converter={StaticResource DirectoryVisibilityConverter}}" Foreground="#FFD600"/>
+                                <TextBlock Text="📄" FontSize="18" Margin="-28,0,10,0" VerticalAlignment="Center" Visibility="{Binding Converter={StaticResource FileVisibilityConverter}}" Foreground="White"/>
                                 <TextBlock Text="{Binding Name}" FontSize="16" VerticalAlignment="Center" Foreground="#FCE49C"/>
                             </StackPanel>
                         </DataTemplate>
