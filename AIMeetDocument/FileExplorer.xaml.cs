@@ -103,7 +103,8 @@ namespace AIMeetDocument
         {
             if (FilesListBox.SelectedItem is FileInfo file)
             {
-                MessageBox.Show(file.FullName, "Selected File Path", MessageBoxButton.OK, MessageBoxImage.Information);
+                var f = FilesListBox.SelectedItem as FileInfo;
+                MessageBox.Show(f.ToString(), "Selected File Path", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
