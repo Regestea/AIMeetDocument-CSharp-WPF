@@ -38,15 +38,17 @@ namespace AIMeetDocument
         private void LoadDirectory(string? path="\\Internal storage")
         {
             Items.Clear();
-            var device=MediaDevice.GetDevices().FirstOrDefault();
+            var device = MediaDevice.GetDevices().FirstOrDefault();
             device.Connect();
-            var directories=device.GetDirectories(path);
-            if (directories.Any())
+            var directories = device.GetDirectories(path);
+            foreach (var dir in directories)
             {
-               foreach (var dir in directories)
-               {
-                   Items.Add(new DirectoryInfo(dir));
-               }
+                Items.Add(new DirectoryInfo(dir));
+            }
+            var files = device.GetFiles(path);
+            foreach (var file in files)
+            {
+                Items.Add(new FileInfo(file));
             }
         }
         
@@ -60,4 +62,3 @@ namespace AIMeetDocument
         }
     }
 }
-
