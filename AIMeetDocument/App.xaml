@@ -4,6 +4,12 @@
              xmlns:local="clr-namespace:AIMeetDocument"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily" Value="Comic Sans MS, Arial, Segoe UI, Verdana, sans-serif"/>
+        </Style>
+        <Style TargetType="{x:Type Control}">
+            <Setter Property="FontFamily" Value="Comic Sans MS, Arial, Segoe UI, Verdana, sans-serif"/>
+        </Style>
         <local:CollectionToVisibilityConverter x:Key="CollectionToVisibilityConverter"/>
         <LinearGradientBrush x:Key="AccentGradient" StartPoint="0,0" EndPoint="1,1">
             <GradientStop Color="#FF6A00" Offset="0.0"/>

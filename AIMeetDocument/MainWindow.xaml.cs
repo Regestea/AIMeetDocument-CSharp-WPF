@@ -124,27 +124,23 @@ public partial class MainWindow : Window
     private void ClearComponents()
     {
         // CardsPanel.Visibility = Visibility.Visible;
+        if (AiProccessUC != null)
+            AiProccessUC.Visibility = Visibility.Collapsed;
+        
         if (SettingsPanelUC != null)
             SettingsPanelUC.Visibility = Visibility.Collapsed;
+        
         if (DevicesList != null)
-        {
             DevicesList.Visibility = Visibility.Collapsed;
-        }
-
+        
         if (FileExplorerUC != null)
-        {
             FileExplorerUC.Visibility = Visibility.Collapsed;
-        }
-
+        
         if (ScanCard != null)
-        {
             ScanCard.Visibility = Visibility.Collapsed;
-        }
-
+        
         if (SelectFileCard != null)
-        {
             SelectFileCard.Visibility = Visibility.Collapsed;
-        }
     }
 
     public void NavigateToFileExplorer(string path)
