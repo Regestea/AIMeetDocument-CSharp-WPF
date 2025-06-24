@@ -6,7 +6,7 @@
              xmlns:io="clr-namespace:System.IO;assembly=System.Runtime"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="600">
-    <Border Background="#212735" CornerRadius="20" Padding="32" Margin="16,0,0,0" Height="400" Width="600"
+    <Border Background="#212735" CornerRadius="28" Padding="45" Margin="22,0,0,0" Height="560" Width="840"
             Effect="{StaticResource CardDropShadow}">
         <Border.BorderBrush>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -14,49 +14,49 @@
                 <GradientStop Color="#F29D3A" Offset="1.0"/>
             </LinearGradientBrush>
         </Border.BorderBrush>
-        <Border.BorderThickness>2</Border.BorderThickness>
+        <Border.BorderThickness>2.8</Border.BorderThickness>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0,0,0,8">
-                    <Button Width="32" Height="32" Click="BackButton_Click" ToolTip="Back"
-                            Background="Transparent" BorderBrush="#fde0a8" BorderThickness="2" Padding="0"
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0,0,0,11">
+                    <Button Width="45" Height="45" Click="BackButton_Click" ToolTip="Back"
+                            Background="Transparent" BorderBrush="#fde0a8" BorderThickness="2.8" Padding="0"
                             HorizontalAlignment="Left" VerticalAlignment="Center"
                             Style="{x:Null}" Cursor="Hand">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Grid>
-                                    <Ellipse Fill="#e8a851" Stroke="#fde0a8" StrokeThickness="2"/>
+                                    <Ellipse Fill="#e8a851" Stroke="#fde0a8" StrokeThickness="2.8"/>
                                     <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Grid>
                             </ControlTemplate>
                         </Button.Template>
-                        <TextBlock Text="⏴" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Text="⏴" FontSize="28" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Button>
-                    <TextBlock Text="File Explorer" FontWeight="Bold" FontSize="18" Foreground="#FCE49C" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="File Explorer" FontWeight="Bold" FontSize="25" Foreground="#FCE49C" Margin="11,0,0,0" VerticalAlignment="Center"/>
                 </StackPanel>
                 <TextBlock Text="{Binding Path, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                           Foreground="#F29D3A" FontSize="14" Margin="0,0,0,16"/>
+                           Foreground="#F29D3A" FontSize="20" Margin="0,0,0,22"/>
                 <ListBox x:Name="FilesListBox" Background="#38435b" BorderThickness="0" 
                          ItemsSource="{Binding Items, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                         Height="280"
+                         Height="392"
                          MouseDoubleClick="FilesListBox_MouseDoubleClick">
                     <ListBox.Resources>
                         <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="12"/>
+                            <Setter Property="CornerRadius" Value="17"/>
                         </Style>
                         <Style TargetType="ScrollBar">
-                            <Setter Property="Width" Value="8"/>
+                            <Setter Property="Width" Value="11"/>
                             <Setter Property="Background" Value="#2a3142"/>
                             <Setter Property="Foreground" Value="#F29D3A"/>
                             <Setter Property="BorderBrush" Value="#F29D3A"/>
-                            <Setter Property="BorderThickness" Value="1"/>
+                            <Setter Property="BorderThickness" Value="1.4"/>
                             <Setter Property="VerticalAlignment" Value="Stretch"/>
-                            <Setter Property="Margin" Value="0,2,2,2"/>
-                            <Setter Property="MaxHeight" Value="272"/>
+                            <Setter Property="Margin" Value="0,3,3,3"/>
+                            <Setter Property="MaxHeight" Value="381"/>
                         </Style>
                         <Style TargetType="Thumb">
                             <Setter Property="Background" Value="#F29D3A"/>
@@ -64,19 +64,19 @@
                     </ListBox.Resources>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Margin="4">
-                                <Ellipse Width="32" Height="32" Fill="#FCE49C" Opacity="0.18" VerticalAlignment="Center"/>
+                            <StackPanel Orientation="Horizontal" Margin="6">
+                                <Ellipse Width="45" Height="45" Fill="#FCE49C" Opacity="0.18" VerticalAlignment="Center"/>
                                 <!-- No icon image, just a placeholder ellipse -->
-                                <TextBlock Text="📁" FontSize="18" Margin="-28,0,10,0" VerticalAlignment="Center" Visibility="{Binding Converter={StaticResource DirectoryVisibilityConverter}}" Foreground="#FFD600"/>
-                                <TextBlock Text="📄" FontSize="18" Margin="-28,0,10,0" VerticalAlignment="Center" Visibility="{Binding Converter={StaticResource FileVisibilityConverter}}" Foreground="White"/>
-                                <TextBlock Text="{Binding Name}" FontSize="16" VerticalAlignment="Center" Foreground="#FCE49C"/>
+                                <TextBlock Text="📁" FontSize="25" Margin="-39,0,14,0" VerticalAlignment="Center" Visibility="{Binding Converter={StaticResource DirectoryVisibilityConverter}}" Foreground="#FFD600"/>
+                                <TextBlock Text="📄" FontSize="25" Margin="-39,0,14,0" VerticalAlignment="Center" Visibility="{Binding Converter={StaticResource FileVisibilityConverter}}" Foreground="White"/>
+                                <TextBlock Text="{Binding Name}" FontSize="22" VerticalAlignment="Center" Foreground="#FCE49C"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="Padding" Value="6,4"/>
+                            <Setter Property="Padding" Value="8,6"/>
                             <Setter Property="Cursor" Value="Hand"/>
                             <Setter Property="FontWeight" Value="Normal"/>
                             <Setter Property="BorderThickness" Value="0"/>
@@ -85,7 +85,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="ListBoxItem">
-                                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="8">
+                                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="11">
                                             <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                         </Border>
                                         <ControlTemplate.Triggers>
@@ -108,13 +108,13 @@
             </StackPanel>
             <Button x:Name="SelectButton"
                     Content="Select"
-                    Height="36"
-                    Margin="0,12,0,0"
-                    FontSize="16"
+                    Height="50"
+                    Margin="0,17,0,0"
+                    FontSize="22"
                     FontWeight="Bold"
                     Foreground="#212735"
                     BorderBrush="#F29D3A"
-                    BorderThickness="2"
+                    BorderThickness="2.8"
                     IsEnabled="{Binding IsAudioFileSelected, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     Click="SelectButton_Click"
                     Grid.Row="1">
@@ -136,7 +136,7 @@
                         <Border Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="8">
+                                CornerRadius="11">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
