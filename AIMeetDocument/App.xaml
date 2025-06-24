@@ -47,5 +47,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <local:DirectoryVisibilityConverter x:Key="DirectoryVisibilityConverter"/>
+        <local:FileVisibilityConverter x:Key="FileVisibilityConverter"/>
     </Application.Resources>
 </Application>

@@ -17,7 +17,7 @@ namespace AIMeetDocument
                 var mainWindow = Application.Current.MainWindow as MainWindow;
                 if (mainWindow != null && !string.IsNullOrEmpty(device.RootPath))
                 {
-                  //  mainWindow.NavigateToFileExplorer(device.FriendlyName, device.RootPath);
+                    mainWindow.NavigateToFileExplorer(device.RootPath);
                 }
             }
         }

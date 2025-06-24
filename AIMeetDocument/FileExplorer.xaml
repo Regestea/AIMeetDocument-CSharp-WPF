@@ -26,18 +26,9 @@
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" Margin="4">
                             <Ellipse Width="32" Height="32" Fill="#FCE49C" Opacity="0.18" VerticalAlignment="Center"/>
-                            <Image Width="24" Height="24" Margin="-28,0,10,0">
-                                <Image.Style>
-                                    <Style TargetType="Image">
-                                        <Setter Property="Source" Value="pack://application:,,,/AIMeetDocument;component/Asserts/Background/folder.png"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding .}" Value="{x:Type io:FileInfo}">
-                                                <Setter Property="Source" Value="pack://application:,,,/AIMeetDocument;component/Asserts/Background/file.png"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Image.Style>
-                            </Image>
+                            <!-- No icon image, just a placeholder ellipse -->
+                            <TextBlock Text="📁" FontSize="18" Margin="-28,0,10,0" VerticalAlignment="Center" Visibility="{Binding Converter={StaticResource DirectoryVisibilityConverter}}"/>
+                            <TextBlock Text="📄" FontSize="18" Margin="-28,0,10,0" VerticalAlignment="Center" Visibility="{Binding Converter={StaticResource FileVisibilityConverter}}"/>
                             <TextBlock Text="{Binding Name}" FontSize="16" VerticalAlignment="Center" Foreground="#FCE49C"/>
                         </StackPanel>
                     </DataTemplate>
@@ -59,11 +50,11 @@
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Bd" Property="Background" Value="#F29D3A"/>
+                                            <Setter TargetName="Bd" Property="Background" Value="#212735"/>
                                             <Setter Property="Foreground" Value="#212735"/>
                                         </Trigger>
                                         <Trigger Property="IsSelected" Value="True">
-                                            <Setter TargetName="Bd" Property="Background" Value="#FCE49C"/>
+                                            <Setter TargetName="Bd" Property="Background" Value="#212735"/>
                                             <Setter Property="FontWeight" Value="Bold"/>
                                             <Setter Property="Foreground" Value="#212735"/>
                                         </Trigger>

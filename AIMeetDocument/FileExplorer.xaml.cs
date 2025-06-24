@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using MediaDevices;
 
 namespace AIMeetDocument
 {
@@ -33,15 +34,18 @@ namespace AIMeetDocument
             }
         }
 
-        private void LoadDirectory(string path)
+        private void LoadDirectory(string? path="\\Internal storage")
         {
             Items.Clear();
-            if (Directory.Exists(path))
+            var device=MediaDevice.GetDevices().FirstOrDefault();
+            device.Connect();
+            var directories=device.GetDirectories(path);
+            if (directories.Any())
             {
-                foreach (var dir in new DirectoryInfo(path).GetDirectories())
-                    Items.Add(dir);
-                foreach (var file in new DirectoryInfo(path).GetFiles())
-                    Items.Add(file);
+               foreach (var dir in directories)
+               {
+                   Items.Add(new DirectoryInfo(dir));
+               }
             }
         }
     }

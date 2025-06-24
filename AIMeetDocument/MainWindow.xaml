@@ -179,5 +179,7 @@
             </StackPanel>
             <local:SettingsPanel x:Name="SettingsPanelUC" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Grid>
+        <!-- FileExplorer Host (hidden by default) -->
+        <local:FileExplorer x:Name="FileExplorerUC" Visibility="Collapsed" Grid.Column="1"/>
     </Grid>
 </Window>

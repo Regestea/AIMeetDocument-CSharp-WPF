@@ -141,4 +141,13 @@ public partial class MainWindow : Window
             SelectFileCard.Visibility = Visibility.Collapsed;
         }
     }
+
+    public void NavigateToFileExplorer(string path)
+    {
+        // Hide main cards and show FileExplorer
+        CardsPanel.Visibility = Visibility.Collapsed;
+        SettingsPanelUC.Visibility = Visibility.Collapsed;
+        FileExplorerUC.Visibility = Visibility.Visible;
+        FileExplorerUC.Path = path;
+    }
 }
