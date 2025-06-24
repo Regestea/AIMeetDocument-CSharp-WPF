@@ -11,6 +11,8 @@ namespace AIMeetDocument
         {
             InitializeComponent();
             FileNameText.Text = _fileName;
+            // Set default save location to Desktop
+            LocationTextBox.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             StartButton.Click += StartButton_Click;
             CancelButton.Click += CancelButton_Click;
             BrowseButton.Click += BrowseButton_Click;
