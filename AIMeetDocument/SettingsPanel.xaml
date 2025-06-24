@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="AIMeetDocument.SettingsPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="400">
+    <Border Background="#212735" CornerRadius="20" Padding="32" Margin="0,0,0,0">
+        <StackPanel>
+            <TextBlock Text="Settings" FontSize="24" Foreground="#FCE49C" HorizontalAlignment="Center" Margin="0,0,0,16"/>
+            <TextBlock Text="Settings content goes here..." Foreground="#FCE49C"/>
+            <Button Content="Back" Style="{StaticResource ModernButton}" Click="Back_Click" Margin="0,16,0,0"/>
+        </StackPanel>
+    </Border>
+</UserControl>
+

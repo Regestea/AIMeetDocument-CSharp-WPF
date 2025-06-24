@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net9.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UseWPF>true</UseWPF>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="Asserts\Background\grid-wave-background.jpg" />
+      <Resource Include="Asserts\Background\grid-wave-background.jpg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Resource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MediaDevices" Version="1.10.0" />
+      <PackageReference Include="MediaDevices.Controls" Version="1.0.1" />
+    </ItemGroup>
+
+</Project>

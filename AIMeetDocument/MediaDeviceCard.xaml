@@ -1,0 +1,37 @@
+﻿<UserControl x:Class="AIMeetDocument.MediaDeviceCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="240" d:DesignWidth="350">
+    <Border Background="#212735" CornerRadius="20" Padding="32" Margin="16,0,0,0" Height="316" Width="304"
+            MouseLeftButtonUp="Border_MouseLeftButtonUp" Cursor="Hand">
+        <Border.BorderBrush>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#FCE49C" Offset="0.0"/>
+                <GradientStop Color="#F29D3A" Offset="1.0"/>
+            </LinearGradientBrush>
+        </Border.BorderBrush>
+        <Border.BorderThickness>2</Border.BorderThickness>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid Width="140" Height="140" HorizontalAlignment="Center" Margin="0,0,0,16">
+                <Ellipse Width="60" Height="60" Fill="#38435b" Opacity="0.18"/>
+                <Ellipse Width="40" Height="40" Fill="#FCE49C"/>
+                <Viewbox Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Canvas Width="24" Height="24">
+                        <!-- Hard Drive Icon -->
+                        <Rectangle Width="20" Height="10" RadiusX="2" RadiusY="2" Fill="#F29D3A" Canvas.Left="2" Canvas.Top="8"/>
+                        <Rectangle Width="16" Height="4" Fill="#212735" Canvas.Left="4" Canvas.Top="10"/>
+                        <Ellipse Width="3" Height="3" Fill="#FCE49C" Canvas.Left="17" Canvas.Top="13"/>
+                    </Canvas>
+                </Viewbox>
+            </Grid>
+            <TextBlock Text="{Binding FriendlyName}" FontWeight="Bold" FontSize="18" Foreground="#FCE49C" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding Description}" FontSize="14" Foreground="#F29D3A" Margin="0,4,0,0" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding Manufacturer}" FontSize="12" Foreground="#FCE49C" Margin="0,2,0,0" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding Model}" FontSize="12" Foreground="#FCE49C" Margin="0,2,0,0" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding SerialNumber}" FontSize="12" Foreground="#FCE49C" Margin="0,2,0,0" HorizontalAlignment="Center"/>
+        </StackPanel>
+    </Border>
+</UserControl>
