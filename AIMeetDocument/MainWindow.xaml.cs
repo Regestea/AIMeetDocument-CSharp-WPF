@@ -97,18 +97,7 @@ public partial class MainWindow : Window
             MessageBox.Show($"Selected files:\n{string.Join("\n", dlg.FileNames)}", "Files Selected");
         }
     }
-
-    private void SidebarToggle_Click(object sender, RoutedEventArgs e)
-    {
-        if (Sidebar.Width > 50)
-        {
-            Sidebar.Width = 48;
-        }
-        else
-        {
-            Sidebar.Width = 220;
-        }
-    }
+    
 
     private void Home_Click(object sender, RoutedEventArgs e)
     {
