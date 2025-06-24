@@ -16,7 +16,23 @@
         </Border.BorderBrush>
         <Border.BorderThickness>2</Border.BorderThickness>
         <StackPanel>
-            <TextBlock Text="File Explorer" FontWeight="Bold" FontSize="18" Foreground="#FCE49C" Margin="0,0,0,8"/>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0,0,0,8">
+                <Button Width="32" Height="32" Click="BackButton_Click" ToolTip="Back"
+                        Background="Transparent" BorderBrush="#fde0a8" BorderThickness="2" Padding="0"
+                        HorizontalAlignment="Left" VerticalAlignment="Center"
+                        Style="{x:Null}" Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <Ellipse Fill="#e8a851" Stroke="#fde0a8" StrokeThickness="2"/>
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <TextBlock Text="⏴" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </Button>
+                <TextBlock Text="File Explorer" FontWeight="Bold" FontSize="18" Foreground="#FCE49C" Margin="8,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
             <TextBlock Text="{Binding Path, RelativeSource={RelativeSource AncestorType=UserControl}}" 
                        Foreground="#F29D3A" FontSize="14" Margin="0,0,0,16"/>
             <ListBox x:Name="FilesListBox" Background="#38435b" BorderThickness="0" 
