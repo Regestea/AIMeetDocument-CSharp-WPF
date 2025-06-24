@@ -62,6 +62,7 @@ namespace AIMeetDocument
             {
                 Items.Add(new FileInfo(file));
             }
+           
         }
         
         private void FilesListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -104,8 +105,25 @@ namespace AIMeetDocument
             if (FilesListBox.SelectedItem is FileInfo file)
             {
                 var f = FilesListBox.SelectedItem as FileInfo;
-                MessageBox.Show(f.ToString(), "Selected File Path", MessageBoxButton.OK, MessageBoxImage.Information);
+                CopyFileToCache(f.ToString());
             }
+        }
+
+        private void CopyFileToCache(string path)
+        {
+            MediaDevice? device = MediaDevice.GetDevices().FirstOrDefault();
+            if(device == null) return;
+            device.Connect();
+            
+          var destinationPathOnPC = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AudioCache");
+            if (!Directory.Exists(destinationPathOnPC))
+            {
+                Directory.CreateDirectory(destinationPathOnPC);
+            }
+            
+            device.DownloadFile(path, System.IO.Path.Combine(destinationPathOnPC, System.IO.Path.GetFileName(path)));
+            
+            
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
