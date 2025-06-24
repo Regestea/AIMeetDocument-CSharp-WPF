@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -8,7 +10,7 @@ using MediaDevices;
 
 namespace AIMeetDocument
 {
-    public partial class FileExplorer : UserControl
+    public partial class FileExplorer : UserControl, INotifyPropertyChanged
     {
         public static readonly DependencyProperty PathProperty = DependencyProperty.Register(
             "Path", typeof(string), typeof(FileExplorer), new PropertyMetadata(string.Empty, OnPathChanged));
@@ -21,10 +23,19 @@ namespace AIMeetDocument
 
         public ObservableCollection<FileSystemInfo> Items { get; set; } = new ObservableCollection<FileSystemInfo>();
 
+        private bool _isAudioFileSelected;
+        public bool IsAudioFileSelected
+        {
+            get => _isAudioFileSelected;
+            set { _isAudioFileSelected = value; OnPropertyChanged(nameof(IsAudioFileSelected)); }
+        }
+
         public FileExplorer()
         {
             InitializeComponent();
             FilesListBox.ItemsSource = Items;
+            FilesListBox.SelectionChanged += FilesListBox_SelectionChanged;
+            DataContext = this;
         }
 
         private static void OnPathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -74,5 +85,29 @@ namespace AIMeetDocument
                 }
             }
         }
+
+        private void FilesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (FilesListBox.SelectedItem is FileInfo file)
+            {
+                var ext = System.IO.Path.GetExtension(file.Name).ToLower();
+                IsAudioFileSelected = ext == ".mp3" || ext == ".wav" || ext == ".m4a";
+            }
+            else
+            {
+                IsAudioFileSelected = false;
+            }
+        }
+
+        private void SelectButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (FilesListBox.SelectedItem is FileInfo file)
+            {
+                MessageBox.Show(file.FullName, "Selected File Path", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

@@ -15,73 +15,120 @@
             </LinearGradientBrush>
         </Border.BorderBrush>
         <Border.BorderThickness>2</Border.BorderThickness>
-        <StackPanel>
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0,0,0,8">
-                <Button Width="32" Height="32" Click="BackButton_Click" ToolTip="Back"
-                        Background="Transparent" BorderBrush="#fde0a8" BorderThickness="2" Padding="0"
-                        HorizontalAlignment="Left" VerticalAlignment="Center"
-                        Style="{x:Null}" Cursor="Hand">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Grid>
-                                <Ellipse Fill="#e8a851" Stroke="#fde0a8" StrokeThickness="2"/>
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                    <TextBlock Text="⏴" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                </Button>
-                <TextBlock Text="File Explorer" FontWeight="Bold" FontSize="18" Foreground="#FCE49C" Margin="8,0,0,0" VerticalAlignment="Center"/>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0,0,0,8">
+                    <Button Width="32" Height="32" Click="BackButton_Click" ToolTip="Back"
+                            Background="Transparent" BorderBrush="#fde0a8" BorderThickness="2" Padding="0"
+                            HorizontalAlignment="Left" VerticalAlignment="Center"
+                            Style="{x:Null}" Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Ellipse Fill="#e8a851" Stroke="#fde0a8" StrokeThickness="2"/>
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <TextBlock Text="⏴" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Button>
+                    <TextBlock Text="File Explorer" FontWeight="Bold" FontSize="18" Foreground="#FCE49C" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                </StackPanel>
+                <TextBlock Text="{Binding Path, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                           Foreground="#F29D3A" FontSize="14" Margin="0,0,0,16"/>
+                <ListBox x:Name="FilesListBox" Background="#38435b" BorderThickness="0" 
+                         ItemsSource="{Binding Items, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                         Height="280"
+                         MouseDoubleClick="FilesListBox_MouseDoubleClick">
+                    <ListBox.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="12"/>
+                        </Style>
+                    </ListBox.Resources>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="4">
+                                <Ellipse Width="32" Height="32" Fill="#FCE49C" Opacity="0.18" VerticalAlignment="Center"/>
+                                <!-- No icon image, just a placeholder ellipse -->
+                                <TextBlock Text="📁" FontSize="18" Margin="-28,0,10,0" VerticalAlignment="Center" Visibility="{Binding Converter={StaticResource DirectoryVisibilityConverter}}"/>
+                                <TextBlock Text="📄" FontSize="18" Margin="-28,0,10,0" VerticalAlignment="Center" Visibility="{Binding Converter={StaticResource FileVisibilityConverter}}"/>
+                                <TextBlock Text="{Binding Name}" FontSize="16" VerticalAlignment="Center" Foreground="#FCE49C"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Padding" Value="6,4"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Setter Property="FontWeight" Value="Normal"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="8">
+                                            <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="#212735"/>
+                                                <Setter Property="Foreground" Value="#212735"/>
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="#212735"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                <Setter Property="Foreground" Value="#212735"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
             </StackPanel>
-            <TextBlock Text="{Binding Path, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                       Foreground="#F29D3A" FontSize="14" Margin="0,0,0,16"/>
-            <ListBox x:Name="FilesListBox" Background="#38435b" BorderThickness="0" 
-                     ItemsSource="{Binding Items, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                     Height="280"
-                     MouseDoubleClick="FilesListBox_MouseDoubleClick">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal" Margin="4">
-                            <Ellipse Width="32" Height="32" Fill="#FCE49C" Opacity="0.18" VerticalAlignment="Center"/>
-                            <!-- No icon image, just a placeholder ellipse -->
-                            <TextBlock Text="📁" FontSize="18" Margin="-28,0,10,0" VerticalAlignment="Center" Visibility="{Binding Converter={StaticResource DirectoryVisibilityConverter}}"/>
-                            <TextBlock Text="📄" FontSize="18" Margin="-28,0,10,0" VerticalAlignment="Center" Visibility="{Binding Converter={StaticResource FileVisibilityConverter}}"/>
-                            <TextBlock Text="{Binding Name}" FontSize="16" VerticalAlignment="Center" Foreground="#FCE49C"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="Background" Value="Transparent"/>
-                        <Setter Property="Padding" Value="6,4"/>
+            <Button x:Name="SelectButton"
+                    Content="Select"
+                    Height="36"
+                    Margin="0,12,0,0"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    Foreground="#212735"
+                    BorderBrush="#F29D3A"
+                    BorderThickness="2"
+                    IsEnabled="{Binding IsAudioFileSelected, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    Click="SelectButton_Click"
+                    Grid.Row="1">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="#FCE49C"/>
                         <Setter Property="Cursor" Value="Hand"/>
-                        <Setter Property="FontWeight" Value="Normal"/>
-                        <Setter Property="BorderThickness" Value="0"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="VerticalContentAlignment" Value="Center"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ListBoxItem">
-                                    <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="8">
-                                        <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Bd" Property="Background" Value="#212735"/>
-                                            <Setter Property="Foreground" Value="#212735"/>
-                                        </Trigger>
-                                        <Trigger Property="IsSelected" Value="True">
-                                            <Setter TargetName="Bd" Property="Background" Value="#212735"/>
-                                            <Setter Property="FontWeight" Value="Bold"/>
-                                            <Setter Property="Foreground" Value="#212735"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#38435b"/>
+                                <Setter Property="Foreground" Value="#888"/>
+                                <Setter Property="Cursor" Value="No"/>
+                            </Trigger>
+                        </Style.Triggers>
                     </Style>
-                </ListBox.ItemContainerStyle>
-            </ListBox>
-        </StackPanel>
+                </Button.Style>
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </Grid>
     </Border>
 </UserControl>
