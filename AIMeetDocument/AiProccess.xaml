@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="600">
-    <Border Background="#212735" CornerRadius="20" Padding="32" Margin="16,0,0,0" Height="400" Width="600"
+             d:DesignHeight="800" d:DesignWidth="1200">
+    <Border Background="#212735" CornerRadius="28" Padding="45" Margin="22,0,0,0" Height="560" Width="840"
             Effect="{DynamicResource CardDropShadow}">
         <Border.BorderBrush>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -13,16 +13,17 @@
                 <GradientStop Color="#F29D3A" Offset="1.0"/>
             </LinearGradientBrush>
         </Border.BorderBrush>
-        <Border.BorderThickness>2</Border.BorderThickness>
+        <Border.BorderThickness>2.8</Border.BorderThickness>
         <StackPanel>
             <!-- File Name Display -->
-            <TextBlock x:Name="FileNameText" Text="FileName.txt" FontSize="16" FontWeight="Bold" Foreground="#FCE49C" Margin="0,0,0,12"/>
+            <TextBlock x:Name="FileNameText" Text="FileName.txt" FontSize="22" FontWeight="Bold" Foreground="#FCE49C" Margin="0,0,0,17"/>
 
             <!-- Language Selection -->
-            <TextBlock Text="Language" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="13"/>
-            <ComboBox x:Name="LanguageCombo" SelectedIndex="0" Margin="0,4,0,12" Height="28" MinWidth="120">
+            <TextBlock Text="Language" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="18"/>
+            <ComboBox x:Name="LanguageCombo" SelectedIndex="0" Margin="0,6,0,17" Height="39" MinWidth="168">
                 <ComboBox.Style>
                     <Style TargetType="ComboBox">
+                        <Setter Property="FontSize" Value="16"/>
                         <Setter Property="BorderBrush" Value="#efa449"/>
                         <Setter Property="BorderThickness" Value="2"/>
                         <Setter Property="Background" Value="#fadc93"/>
@@ -71,10 +72,11 @@
             </ComboBox>
 
             <!-- File Type Selection -->
-            <TextBlock Text="File Type" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="13"/>
-            <ComboBox x:Name="FileTypeCombo" SelectedIndex="0" Margin="0,4,0,12" Height="28" MinWidth="120">
+            <TextBlock Text="File Type" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="18"/>
+            <ComboBox x:Name="FileTypeCombo" SelectedIndex="0" Margin="0,6,0,17" Height="39" MinWidth="168">
                 <ComboBox.Style>
                     <Style TargetType="ComboBox">
+                        <Setter Property="FontSize" Value="16"/>
                         <Setter Property="BorderBrush" Value="#efa449"/>
                         <Setter Property="BorderThickness" Value="2"/>
                         <Setter Property="Background" Value="#fadc93"/>
@@ -113,11 +115,12 @@
             </ComboBox>
 
             <!-- Save Location -->
-            <TextBlock Text="Save Location" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="13"/>
-            <DockPanel Margin="0,4,0,12" LastChildFill="False">
-                <TextBox x:Name="LocationTextBox" Width="385" Height="28" VerticalAlignment="Center" Margin="0,0,8,0" IsReadOnly="True">
+            <TextBlock Text="Save Location" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="18"/>
+            <DockPanel Margin="0,6,0,17" LastChildFill="False" VerticalAlignment="Center">
+                <TextBox x:Name="LocationTextBox" Width="550" Height="39" VerticalAlignment="Center" Margin="0,0,11,0" IsReadOnly="True" VerticalContentAlignment="Center">
                     <TextBox.Style>
                         <Style TargetType="TextBox">
+                            <Setter Property="FontSize" Value="16"/>
                             <Setter Property="BorderBrush" Value="#efa449"/>
                             <Setter Property="BorderThickness" Value="2"/>
                             <Setter Property="Background" Value="#fce6ac"/>
@@ -133,10 +136,10 @@
                         </Style>
                     </TextBox.Style>
                 </TextBox>
-                <Button x:Name="BrowseButton" Content="Save Location" Width="120" Height="28" Style="{DynamicResource ModernButton}" Cursor="Hand">
+                <Button x:Name="BrowseButton" Content="Save Location" Width="168" Height="39" Style="{DynamicResource ModernButton}" Cursor="Hand">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
-                            <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="7">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                         </ControlTemplate>
@@ -145,18 +148,18 @@
             </DockPanel>
 
             <!-- Start Button Centered -->
-            <StackPanel x:Name="ActionPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0">
-                <Button x:Name="StartButton" Content="Start" Height="36" Width="120" Style="{DynamicResource ModernButton}" Cursor="Hand"/>
+            <StackPanel x:Name="ActionPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,17,0,0">
+                <Button x:Name="StartButton" Content="Start" Height="50" Width="168" Style="{DynamicResource ModernButton}" Cursor="Hand" FontSize="22"/>
             </StackPanel>
 
             <!-- Modern Loading & Cancel Centered -->
-            <StackPanel x:Name="LoadingPanel" Orientation="Horizontal" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,24,0,0" Height="48">
-                <Viewbox Width="48" Height="48" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,16,0">
-                    <Grid Width="40" Height="40">
-                        <Ellipse Width="40" Height="40" StrokeThickness="5" Stroke="#FFD600" Opacity="0.15"/>
-                        <Ellipse Width="40" Height="40" StrokeThickness="5" StrokeDashArray="0,2 10,2" Stroke="#F29D3A">
+            <StackPanel x:Name="LoadingPanel" Orientation="Horizontal" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,34,0,0" Height="67">
+                <Viewbox Width="67" Height="67" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,22,0">
+                    <Grid Width="56" Height="56">
+                        <Ellipse Width="56" Height="56" StrokeThickness="7" Stroke="#FFD600" Opacity="0.15"/>
+                        <Ellipse Width="56" Height="56" StrokeThickness="7" StrokeDashArray="0,2 10,2" Stroke="#F29D3A">
                             <Ellipse.RenderTransform>
-                                <RotateTransform x:Name="SpinnerRotate" Angle="0" CenterX="20" CenterY="20"/>
+                                <RotateTransform x:Name="SpinnerRotate" Angle="0" CenterX="28" CenterY="28"/>
                             </Ellipse.RenderTransform>
                             <Ellipse.Triggers>
                                 <EventTrigger RoutedEvent="FrameworkElement.Loaded">
@@ -170,8 +173,8 @@
                         </Ellipse>
                     </Grid>
                 </Viewbox>
-                <Button x:Name="CancelButton" Content="Cancel" Height="40" Width="100" Style="{DynamicResource ModernButton}"
-                        HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" Cursor="Hand"/>
+                <Button x:Name="CancelButton" Content="Cancel" Height="56" Width="140" Style="{DynamicResource ModernButton}"
+                        HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" Cursor="Hand" FontSize="22"/>
             </StackPanel>
         </StackPanel>
     </Border>
