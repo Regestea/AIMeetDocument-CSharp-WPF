@@ -181,5 +181,7 @@
         </Grid>
         <!-- FileExplorer Host (hidden by default) -->
         <local:FileExplorer x:Name="FileExplorerUC" Visibility="Collapsed" Grid.Column="1"/>
+        <!-- AiProccess Host (hidden by default) -->
+        <local:AiProccess x:Name="AiProccessUC" Visibility="Collapsed" Grid.Column="1"/>
     </Grid>
 </Window>

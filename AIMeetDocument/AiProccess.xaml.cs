@@ -4,10 +4,10 @@ using Microsoft.Win32;
 
 namespace AIMeetDocument
 {
-    public partial class AiProcess : UserControl
+    public partial class AiProccess : UserControl
     {
         private string _fileName = "FileName.txt";
-        public AiProcess()
+        public AiProccess()
         {
             InitializeComponent();
             FileNameText.Text = _fileName;

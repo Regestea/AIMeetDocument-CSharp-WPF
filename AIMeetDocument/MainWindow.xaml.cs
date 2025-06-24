@@ -154,4 +154,14 @@ public partial class MainWindow : Window
         FileExplorerUC.Visibility = Visibility.Visible;
         FileExplorerUC.Path = path;
     }
+
+    public void NavigateToAiProccess(string fileName)
+    {
+        ClearComponents();
+        if (AiProccessUC != null)
+        {
+            AiProccessUC.Visibility = Visibility.Visible;
+            AiProccessUC.SetFileName(fileName);
+        }
+    }
 }
