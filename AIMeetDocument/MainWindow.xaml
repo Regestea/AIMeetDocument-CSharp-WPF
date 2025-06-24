@@ -90,7 +90,7 @@
                             </Viewbox>
                         </Grid>
                         <TextBlock Text="Scan for new drive" FontSize="18" Foreground="#FCE49C" HorizontalAlignment="Center" Margin="0,0,0,16"/>
-                        <Button Style="{StaticResource ModernButton}" Content="Scan Now" Click="ScanNow_Click" BorderThickness="1">
+                        <Button Style="{StaticResource ModernButton}" Content="Scan Now" Click="ScanNow_Click" Cursor="Hand" BorderThickness="1">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="5" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
@@ -135,7 +135,7 @@
                             </Viewbox>
                         </Grid>
                         <TextBlock Text="Select file manually" FontSize="18" Foreground="#FCE49C" HorizontalAlignment="Center" Margin="0,0,0,16"/>
-                        <Button Style="{StaticResource ModernButton}" Content="Select File" Click="SelectFile_Click" BorderThickness="1">
+                        <Button Style="{StaticResource ModernButton}" Content="Select File" Click="SelectFile_Click" Cursor="Hand" BorderThickness="1">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="5" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
