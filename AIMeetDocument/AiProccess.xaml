@@ -4,15 +4,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="400">
-    <Border CornerRadius="16" Background="#22242A" Padding="24" Margin="16" Effect="{DynamicResource ShadowEffect}">
+             d:DesignHeight="400" d:DesignWidth="600">
+    <Border Background="#212735" CornerRadius="20" Padding="32" Margin="16,0,0,0" Height="400" Width="600"
+            Effect="{DynamicResource CardDropShadow}">
+        <Border.BorderBrush>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#FCE49C" Offset="0.0"/>
+                <GradientStop Color="#F29D3A" Offset="1.0"/>
+            </LinearGradientBrush>
+        </Border.BorderBrush>
+        <Border.BorderThickness>2</Border.BorderThickness>
         <StackPanel>
             <!-- File Name Display -->
-            <TextBlock x:Name="FileNameText" Text="FileName.txt" FontSize="20" FontWeight="Bold" Foreground="#FCE49C" Margin="0,0,0,16"/>
+            <TextBlock x:Name="FileNameText" Text="FileName.txt" FontSize="16" FontWeight="Bold" Foreground="#FCE49C" Margin="0,0,0,12"/>
 
             <!-- Language Selection -->
-            <TextBlock Text="Language" Foreground="#FFD600" FontWeight="SemiBold"/>
-            <ComboBox x:Name="LanguageCombo" SelectedIndex="0" Margin="0,4,0,16" Height="32">
+            <TextBlock Text="Language" Foreground="#FFD600" FontWeight="SemiBold" FontSize="13"/>
+            <ComboBox x:Name="LanguageCombo" SelectedIndex="0" Margin="0,4,0,12" Height="28" MinWidth="120">
                 <ComboBoxItem Content="English" Tag="en"/>
                 <ComboBoxItem Content="Persian" Tag="fa"/>
                 <ComboBoxItem Content="Arabic" Tag="ar"/>
@@ -29,29 +37,57 @@
             </ComboBox>
 
             <!-- File Type Selection -->
-            <TextBlock Text="File Type" Foreground="#FFD600" FontWeight="SemiBold"/>
-            <ComboBox x:Name="FileTypeCombo" SelectedIndex="0" Margin="0,4,0,16" Height="32">
+            <TextBlock Text="File Type" Foreground="#FFD600" FontWeight="SemiBold" FontSize="13"/>
+            <ComboBox x:Name="FileTypeCombo" SelectedIndex="0" Margin="0,4,0,12" Height="28" MinWidth="120">
                 <ComboBoxItem Content="Word"/>
                 <ComboBoxItem Content="PDF"/>
                 <ComboBoxItem Content="MD"/>
             </ComboBox>
 
             <!-- Save Location -->
-            <TextBlock Text="Save Location" Foreground="#FFD600" FontWeight="SemiBold"/>
-            <DockPanel Margin="0,4,0,16">
-                <TextBox x:Name="LocationTextBox" Width="230" Height="32" VerticalAlignment="Center"/>
-                <Button x:Name="BrowseButton" Content="Browse" Width="80" Height="32" Margin="8,0,0,0"/>
+            <TextBlock Text="Save Location" Foreground="#FFD600" FontWeight="SemiBold" FontSize="13"/>
+            <DockPanel Margin="0,4,0,12" LastChildFill="False">
+                <TextBox x:Name="LocationTextBox" Width="350" Height="28" VerticalAlignment="Center" Margin="0,0,8,0" IsReadOnly="True"/>
+                <Button x:Name="BrowseButton" Content="Select Location" Width="120" Height="28" Background="#F29D3A" Foreground="#22242A" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
             </DockPanel>
 
-            <!-- Start Button / Loading & Cancel -->
-            <StackPanel x:Name="ActionPanel">
-                <Button x:Name="StartButton" Content="Start" Height="36" Background="#FFD600" Foreground="#22242A" FontWeight="Bold"/>
+            <!-- Start Button Centered -->
+            <StackPanel x:Name="ActionPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0">
+                <Button x:Name="StartButton" Content="Start" Height="36" Width="120" Background="#FFD600" Foreground="#22242A" FontWeight="Bold" BorderThickness="0" Cursor="Hand" Style="{DynamicResource ModernButton}"/>
             </StackPanel>
-            <StackPanel x:Name="LoadingPanel" Orientation="Horizontal" Visibility="Collapsed" VerticalAlignment="Center" Margin="0,8,0,0">
-                <ProgressBar IsIndeterminate="True" Width="40" Height="36"/>
-                <Button x:Name="CancelButton" Content="Cancel" Height="36" Background="#FCE49C" Foreground="#22242A" FontWeight="Bold" Margin="12,0,0,0"/>
+
+            <!-- Modern Loading & Cancel Centered -->
+            <StackPanel x:Name="LoadingPanel" Orientation="Horizontal" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,24,0,0" Height="48">
+                <Viewbox Width="48" Height="48" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,16,0">
+                    <Grid Width="40" Height="40">
+                        <Ellipse Width="40" Height="40" StrokeThickness="5" Stroke="#FFD600" Opacity="0.15"/>
+                        <Ellipse Width="40" Height="40" StrokeThickness="5" StrokeDashArray="0,2 10,2" Stroke="#F29D3A">
+                            <Ellipse.RenderTransform>
+                                <RotateTransform x:Name="SpinnerRotate" Angle="0" CenterX="20" CenterY="20"/>
+                            </Ellipse.RenderTransform>
+                            <Ellipse.Triggers>
+                                <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                                    <BeginStoryboard>
+                                        <Storyboard RepeatBehavior="Forever">
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" From="0" To="360" Duration="0:0:0.7"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Ellipse.Triggers>
+                        </Ellipse>
+                    </Grid>
+                </Viewbox>
+                <Button x:Name="CancelButton" Content="Cancel" Height="40" Width="100" Background="#FCE49C" Foreground="#22242A" FontWeight="Bold" BorderThickness="0" Cursor="Hand"
+                        HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="20">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
             </StackPanel>
         </StackPanel>
     </Border>
 </UserControl>
-

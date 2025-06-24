@@ -42,14 +42,16 @@ namespace AIMeetDocument
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new SaveFileDialog();
-            dialog.FileName = _fileName;
-            dialog.Filter = "All files (*.*)|*.*";
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.CheckFileExists = false;
+            dialog.CheckPathExists = true;
+            dialog.ValidateNames = false;
+            dialog.FileName = "Select this folder";
             if (dialog.ShowDialog() == true)
             {
-                LocationTextBox.Text = dialog.FileName;
+                var path = System.IO.Path.GetDirectoryName(dialog.FileName);
+                LocationTextBox.Text = path;
             }
         }
     }
 }
-
