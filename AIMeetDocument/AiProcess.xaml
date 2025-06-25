@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1200">
-    <Border Background="#212735" CornerRadius="28" Padding="45" Margin="22,0,0,0" Height="560" Width="840"
+    <Border Background="#212735" CornerRadius="28" Padding="45" Margin="22,0,0,0" Height="650" Width="840"
             Effect="{DynamicResource CardDropShadow}">
         <Border.BorderBrush>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -146,6 +146,28 @@
                     </Button.Template>
                 </Button>
             </DockPanel>
+
+            <!-- User Prompt Text Area -->
+            <TextBlock Text="Prompt" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="18"/>
+            <TextBox x:Name="UserPromptTextBox" Height="80" Margin="0,6,0,17" AcceptsReturn="True" TextWrapping="Wrap" FontSize="16" BorderBrush="#efa449" BorderThickness="2" Background="#fce6ac">
+                <TextBox.Style>
+                    <Style TargetType="TextBox">
+                        <Setter Property="FontSize" Value="16"/>
+                        <Setter Property="BorderBrush" Value="#efa449"/>
+                        <Setter Property="BorderThickness" Value="2"/>
+                        <Setter Property="Background" Value="#fce6ac"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TextBox">
+                                    <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="6">
+                                        <ScrollViewer x:Name="PART_ContentHost"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
 
             <!-- Start Button Centered -->
             <StackPanel x:Name="ActionPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,17,0,0">

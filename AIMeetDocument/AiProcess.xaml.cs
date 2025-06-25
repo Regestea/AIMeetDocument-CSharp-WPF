@@ -35,17 +35,19 @@ namespace AIMeetDocument
             ActionPanel.Visibility = Visibility.Collapsed;
             LoadingPanel.Visibility = Visibility.Visible;
 
-            string language = ((ComboBoxItem)LanguageCombo.SelectedItem).Tag.ToString();
-            string fileType = ((ComboBoxItem)FileTypeCombo.SelectedItem).Content.ToString();
+            string language = ((ComboBoxItem)LanguageCombo.SelectedItem).Tag.ToString()!;
+            string fileType = ((ComboBoxItem)FileTypeCombo.SelectedItem).Content.ToString()!;
+            string userPrompt = UserPromptTextBox.Text;
             string location = LocationTextBox.Text;
+
             string msg =
-                $"File Name: {_fileName}\nLanguage: {language}\nFile Type: {fileType}\nSave Location: {location}";
+                $"File Name: {_fileName}\nLanguage: {language}\nFile Type: {fileType}\nSave Location: {location}\nPrompt: {userPrompt}";
 
             var audioPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AudioCache", _fileName);
             if (File.Exists(audioPath))
             {
                 _cts = new CancellationTokenSource();
-                _ = StartProcess(audioPath, language, _cts.Token);
+                _ = StartProcess(userPrompt, audioPath, language!, _cts.Token);
             }
         }
 
@@ -58,11 +60,13 @@ namespace AIMeetDocument
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new Microsoft.Win32.OpenFileDialog();
-            dialog.CheckFileExists = false;
-            dialog.CheckPathExists = true;
-            dialog.ValidateNames = false;
-            dialog.FileName = "Select this folder";
+            var dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                CheckFileExists = false,
+                CheckPathExists = true,
+                ValidateNames = false,
+                FileName = "Select this folder"
+            };
             if (dialog.ShowDialog() == true)
             {
                 var path = System.IO.Path.GetDirectoryName(dialog.FileName);
@@ -70,14 +74,18 @@ namespace AIMeetDocument
             }
         }
 
-        private async Task StartProcess(string audioFilePath, string language, CancellationToken cancellationToken)
+        private async Task StartProcess(string userPrompt,string audioFilePath, string language, CancellationToken cancellationToken)
         {
             string modelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LLM", "ggml-large-v3.bin");
             string fullText = "";
+            
             using (var whisperService = new WhisperService(modelPath))
             {
                 fullText = await whisperService.TranscribeAsync(audioFilePath, language, cancellationToken);
             }
+
+            var llm = new LocalLanguageModelService();
+            var aIResult= await llm.GetChatCompletionAsync(userPrompt+fullText,cancellationToken);
         }
     }
 }
