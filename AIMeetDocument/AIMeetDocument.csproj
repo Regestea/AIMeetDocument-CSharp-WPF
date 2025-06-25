@@ -16,8 +16,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Asserts\Background\grid-wave-background.png" />
-      <Resource Include="Asserts\Background\grid-wave-background.png" />
+      <None Remove="Asserts\Background\background-gold.jpeg" />
+      <Resource Include="Asserts\Background\background-gold.jpeg" />
     </ItemGroup>
 
     <ItemGroup>

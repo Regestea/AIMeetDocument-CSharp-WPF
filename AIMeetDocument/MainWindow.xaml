@@ -65,7 +65,7 @@
         <!-- Main Content -->
         <Grid Grid.Column="1">
             <Grid.Background>
-                <ImageBrush ImageSource="pack://application:,,,/Asserts/Background/grid-wave-background.png" Stretch="UniformToFill"/>
+                <ImageBrush ImageSource="pack://application:,,,/Asserts/Background/background-gold.jpeg" Stretch="UniformToFill"/>
             </Grid.Background>
             <StackPanel x:Name="CardsPanel" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
                 <!-- First Card: Scan for new drive -->
