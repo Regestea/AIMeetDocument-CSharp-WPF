@@ -12,10 +12,11 @@ namespace AIMeetDocument.Services
     /// It ensures audio is in the correct format (16kHz WAV) before processing.
     /// This version uses FFmpeg for fast and robust audio conversion.
     /// </summary>
-    public class WhisperService
+    public class WhisperService : IDisposable
     {
         private readonly string _modelPath;
         private readonly WhisperFactory _whisperFactory;
+        private bool _disposed;
 
         /// <summary>
         /// Initializes a new instance of the WhisperService.
@@ -133,6 +134,21 @@ namespace AIMeetDocument.Services
                 }
             }
             return tempPath;
+        }
+
+        /// <summary>
+        /// Disposes the resources used by the WhisperService.
+        /// </summary>
+        public void Dispose()
+        {
+            if (!_disposed)
+            {
+                if (_whisperFactory is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+                _disposed = true;
+            }
         }
     }
 }
