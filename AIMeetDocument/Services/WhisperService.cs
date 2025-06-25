@@ -42,7 +42,7 @@ namespace AIMeetDocument.Services
         /// <returns>A Task representing the asynchronous transcription operation. The result will be the full transcribed text.</returns>
         /// <exception cref="FileNotFoundException">Thrown if the audio file does not exist.</exception>
         /// <exception cref="Exception">Propagates exceptions from the transcription process.</exception>
-        public async Task<string> TranscribeAsync(string audioPath,string language = "en")
+        public async Task<string> TranscribeAsync(string audioPath, string language = "en", CancellationToken cancellationToken = default)
         {
             if (!File.Exists(audioPath))
             {
@@ -65,13 +65,18 @@ namespace AIMeetDocument.Services
                 await using var fileStream = File.OpenRead(processedAudioPath);
                 
                 // Process the audio file and stream the results.
-                await foreach (var result in processor.ProcessAsync(fileStream))
+                await foreach (var result in processor.ProcessAsync(fileStream).WithCancellation(cancellationToken))
                 {
-                    // string segment = $"{result.Start} -> {result.End}: {result.Text}";
+                    cancellationToken.ThrowIfCancellationRequested();
                     fullTranscription.AppendLine(result.Text);
                 }
 
                 return fullTranscription.ToString();
+            }
+            catch (OperationCanceledException)
+            {
+                // Handle cancellation gracefully
+                return "Transcription cancelled.";
             }
             catch (Exception ex)
             {

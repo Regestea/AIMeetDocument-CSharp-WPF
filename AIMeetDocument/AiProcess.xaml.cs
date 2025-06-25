@@ -3,12 +3,15 @@ using System.Windows;
 using System.Windows.Controls;
 using AIMeetDocument.Services;
 using Microsoft.Win32;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AIMeetDocument
 {
     public partial class AiProcess : UserControl
     {
         private string _fileName = "FileName.txt";
+        private CancellationTokenSource _cts;
 
         public AiProcess()
         {
@@ -41,12 +44,14 @@ namespace AIMeetDocument
             var audioPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AudioCache", _fileName);
             if (File.Exists(audioPath))
             {
-                _ = StartProcess(audioPath, language);
+                _cts = new CancellationTokenSource();
+                _ = StartProcess(audioPath, language, _cts.Token);
             }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
+            _cts?.Cancel();
             ActionPanel.Visibility = Visibility.Visible;
             LoadingPanel.Visibility = Visibility.Collapsed;
         }
@@ -65,12 +70,12 @@ namespace AIMeetDocument
             }
         }
 
-        private async Task StartProcess(string audioFilePath, string language)
+        private async Task StartProcess(string audioFilePath, string language, CancellationToken cancellationToken)
         {
             string modelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LLM", "ggml-large-v3.bin");
             var whisperService = new WhisperService(modelPath);
 
-            var fullText = await whisperService.TranscribeAsync(audioFilePath, language);
+            var fullText = await whisperService.TranscribeAsync(audioFilePath, language, cancellationToken);
         }
     }
 }
