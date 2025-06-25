@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using FFMpegCore;
 using NAudio.Wave;
 using Whisper.net;
 // Kept for the initial fast check of .wav files
@@ -40,11 +39,10 @@ namespace AIMeetDocument.Services
         /// Transcribes the audio from the given file path.
         /// </summary>
         /// <param name="audioPath">The path to the audio file to transcribe.</param>
-        /// <param name="progress">An optional progress reporter to receive transcription segments as they are processed.</param>
         /// <returns>A Task representing the asynchronous transcription operation. The result will be the full transcribed text.</returns>
         /// <exception cref="FileNotFoundException">Thrown if the audio file does not exist.</exception>
         /// <exception cref="Exception">Propagates exceptions from the transcription process.</exception>
-        public async Task<string> TranscribeAsync(string audioPath, IProgress<string> progress = null)
+        public async Task<string> TranscribeAsync(string audioPath,string language = "en")
         {
             if (!File.Exists(audioPath))
             {
@@ -60,18 +58,17 @@ namespace AIMeetDocument.Services
                 var fullTranscription = new System.Text.StringBuilder();
 
                 // Build the processor and configure it for transcription.
-                using var processor = _whisperFactory.CreateBuilder()
-                    .WithLanguage("auto") // Automatic language detection
+                await using var processor = _whisperFactory.CreateBuilder()
+                    .WithLanguage(language) // Automatic language detection
                     .Build();
 
-                using var fileStream = File.OpenRead(processedAudioPath);
+                await using var fileStream = File.OpenRead(processedAudioPath);
                 
                 // Process the audio file and stream the results.
                 await foreach (var result in processor.ProcessAsync(fileStream))
                 {
-                    string segment = $"{result.Start} -> {result.End}: {result.Text}";
-                    fullTranscription.AppendLine(segment);
-                    progress?.Report(segment); // Report progress to the UI thread if a handler is provided.
+                    // string segment = $"{result.Start} -> {result.End}: {result.Text}";
+                    fullTranscription.AppendLine(result.Text);
                 }
 
                 return fullTranscription.ToString();
@@ -84,7 +81,7 @@ namespace AIMeetDocument.Services
             }
             finally
             {
-                // Clean up the temporary converted file, if one was created.
+                // Clean up the temporary converted file if one was created.
                 if (processedAudioPath != null && processedAudioPath != audioPath && File.Exists(processedAudioPath))
                 {
                     File.Delete(processedAudioPath);
@@ -100,37 +97,36 @@ namespace AIMeetDocument.Services
         /// <returns>The path to the compliant 16kHz WAV file (either the original or a temporary one).</returns>
         private async Task<string> EnsureWav16KHzAsync(string inputPath)
         {
-            // First, do a quick check to see if the file is already a compliant WAV file.
-            // This avoids unnecessary conversion.
             if (Path.GetExtension(inputPath).Equals(".wav", StringComparison.OrdinalIgnoreCase))
             {
-                try
+                using var reader = new WaveFileReader(inputPath);
+                if (reader.WaveFormat.SampleRate == 16000)
                 {
-                    using var reader = new WaveFileReader(inputPath);
-                    if (reader.WaveFormat.SampleRate == 16000 && reader.WaveFormat.Channels == 1 && reader.WaveFormat.Encoding == WaveFormatEncoding.Pcm)
-                    {
-                        // File is already in the correct format (16kHz, mono, PCM).
-                        return inputPath;
-                    }
-                }
-                catch (Exception ex)
-                {
-                     // Could be a malformed WAV header, proceed to FFmpeg for a more robust conversion.
-                     Console.WriteLine($"NAudio could not read WAV file, falling back to FFmpeg. Error: {ex.Message}");
+                    return inputPath;
                 }
             }
-
-            // If the file is not a compliant WAV, use FFmpeg to convert it.
-            string tempPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.wav");
-
-            await FFMpegArguments
-                .FromFileInput(inputPath)
-                .OutputToFile(tempPath, true, options => options
-                    .WithAudioCodec("pcm_s16le")      // Standard for WAV files
-                    .WithAudioSamplingRate(16000)     // Resample to 16kHz
-                    .WithCustomArgument("-ac 1"))     // Set audio channels to 1 (mono). This is a more robust method.
-                .ProcessAsynchronously();
-            
+            // Convert to 16kHz WAV
+            string tempPath = Path.Combine(Path.GetTempPath(), $"converted_{Guid.NewGuid()}.wav");
+            using (var reader = new AudioFileReader(inputPath))
+            {
+                var outFormat = new WaveFormat(16000, reader.WaveFormat.Channels);
+                var resampler = new NAudio.Wave.SampleProviders.WdlResamplingSampleProvider(reader, 16000);
+                using (var waveFileWriter = new WaveFileWriter(tempPath, outFormat))
+                {
+                    float[] buffer = new float[4096];
+                    int samplesRead;
+                    while ((samplesRead = resampler.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        // Convert float samples to 16-bit PCM
+                        for (int i = 0; i < samplesRead; i++)
+                        {
+                            var sample = (short)(Math.Max(-1.0f, Math.Min(1.0f, buffer[i])) * short.MaxValue);
+                            waveFileWriter.WriteByte((byte)(sample & 0xff));
+                            waveFileWriter.WriteByte((byte)((sample >> 8) & 0xff));
+                        }
+                    }
+                }
+            }
             return tempPath;
         }
     }

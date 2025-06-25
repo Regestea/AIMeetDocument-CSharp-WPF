@@ -106,7 +106,7 @@ namespace AIMeetDocument
             {
                 var f = FilesListBox.SelectedItem as FileInfo;
                 CopyFileToCache(f.ToString());
-                // Navigate to AiProccess and pass the file name
+                // Navigate to AiProcess and pass the file name
                 var mainWindow = Application.Current.MainWindow as MainWindow;
                 if (mainWindow != null)
                 {

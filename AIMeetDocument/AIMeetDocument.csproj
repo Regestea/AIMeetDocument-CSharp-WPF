@@ -9,18 +9,22 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Remove="Asserts\Background\grid-wave-background.jpg" />
-      <Resource Include="Asserts\Background\grid-wave-background.jpg">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Resource>
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="FFMpegCore" Version="5.2.0" />
       <PackageReference Include="MediaDevices" Version="1.10.0" />
       <PackageReference Include="MediaDevices.Controls" Version="1.0.1" />
       <PackageReference Include="NAudio" Version="2.2.1" />
       <PackageReference Include="Whisper.net.AllRuntimes" Version="1.8.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Asserts\Background\grid-wave-background.png" />
+      <Resource Include="Asserts\Background\grid-wave-background.png" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="LLM\ggml-large-v3.bin" />
+      <Content Include="LLM\ggml-large-v3.bin">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>
