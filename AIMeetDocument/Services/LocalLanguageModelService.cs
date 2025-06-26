@@ -15,7 +15,6 @@ namespace AIMeetDocument.Services
         private readonly OpenAIClient _client;
         private readonly string _defaultSystemPrompt;
         private readonly string _defaultModel;
-        private readonly IConfiguration _configuration;
 
         public LocalLanguageModelService()
         {
@@ -23,13 +22,13 @@ namespace AIMeetDocument.Services
                 .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
-            _configuration = builder.Build();
+            IConfiguration configuration = builder.Build();
 
-            var serverUrl = _configuration["LocalLanguageModelStudio:ServerUrl"];
-            var apiKey = _configuration["LocalLanguageModelStudio:ApiKey"];
-            _defaultSystemPrompt = _configuration["LocalLanguageModelStudio:SystemPrompt"] ??
+            var serverUrl = configuration["LLMStudio:ServerUrl"];
+            
+            _defaultSystemPrompt = configuration["SystemPrompt"] ??
                                    throw new InvalidOperationException("no prompt found in app settings for system");
-            _defaultModel = _configuration["LocalLanguageModelStudio:Model"] ??
+            _defaultModel = configuration["LLMStudio:Model"] ??
                             throw new InvalidOperationException("no model found in app settings");
 
             if (string.IsNullOrWhiteSpace(serverUrl))
@@ -42,7 +41,7 @@ namespace AIMeetDocument.Services
                 Endpoint = new Uri(serverUrl)
             };
 
-            _client = new OpenAIClient(new ApiKeyCredential(apiKey), options);
+            _client = new OpenAIClient(new ApiKeyCredential("no need"), options);
         }
 
         public async Task<string> GetChatCompletionAsync(string? userPrompt, CancellationToken cancellationToken = default)
