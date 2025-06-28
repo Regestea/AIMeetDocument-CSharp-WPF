@@ -112,9 +112,10 @@ namespace AIMeetDocument
         private async Task<string> StartProcess(string userPrompt, string audioFilePath, string language,
             CancellationToken cancellationToken)
         {
-            string modelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LLM", "ggml-large-v3.bin");
+            string modelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LLM", "ggml-large-v3-turbo.bin");
             string fullText = "";
 
+            
             using (var whisperService = new WhisperService(modelPath))
             {
                 fullText = await whisperService.TranscribeAsync(audioFilePath, language, cancellationToken);

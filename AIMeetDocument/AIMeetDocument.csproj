@@ -30,12 +30,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="LLM\ggml-large-v3.bin"/>
-        <Content Include="LLM\ggml-large-v3.bin">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
         <None Remove="appsettings.json" />
         <Content Include="appsettings.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="LLM\ggml-large-v3-turbo.bin" />
+        <Content Include="LLM\ggml-large-v3-turbo.bin">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
