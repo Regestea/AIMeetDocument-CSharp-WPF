@@ -30,7 +30,7 @@ namespace AIMeetDocument
             FileNameText.Text = fileName;
         }
 
-        private void StartButton_Click(object sender, RoutedEventArgs e)
+        private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
             ActionPanel.Visibility = Visibility.Collapsed;
             LoadingPanel.Visibility = Visibility.Visible;
@@ -47,8 +47,43 @@ namespace AIMeetDocument
             if (File.Exists(audioPath))
             {
                 _cts = new CancellationTokenSource();
-                _ = StartProcess(userPrompt, audioPath, language!, _cts.Token);
+                var resultContent = await StartProcess(userPrompt, audioPath, language!, _cts.Token);
+                if (_cts.IsCancellationRequested)
+                {
+                    MessageBox.Show("Process was cancelled.");
+                    ActionPanel.Visibility = Visibility.Visible;
+                    LoadingPanel.Visibility = Visibility.Collapsed;
+                    return;
+                }
+                
+                if (!string.IsNullOrEmpty(resultContent))
+                {
+                    var fileName = Guid.NewGuid();
+                    switch (fileType)
+                    {
+                        case "Markdown":
+                            var markdownService = new MarkdownToPdfService();
+                            string outputFilePath = Path.Combine(location, $"{fileName}.pdf");
+                            markdownService.ConvertMarkdownStringToPdf(resultContent, outputFilePath);
+                            MessageBox.Show($"Markdown file saved to {outputFilePath}");
+                            break;
+                        case "Word":
+                            var wordService = new MarkdownToWordService();
+                            string wordOutputPath = Path.Combine(location, $"{fileName}.docx");
+                            wordService.ConvertMarkdownStringToDocx(resultContent, wordOutputPath);
+                            MessageBox.Show($"Word document saved to {wordOutputPath}");
+                            break;
+                        case "PDF":
+                            var pdfService = new MarkdownToPdfService();
+                            string pdfOutputPath = Path.Combine(location, $"{fileName}.pdf");
+                            pdfService.ConvertMarkdownStringToPdf(resultContent, pdfOutputPath);
+                            MessageBox.Show($"PDF file saved to {pdfOutputPath}");
+                            break;
+                    }
+                }
             }
+            ActionPanel.Visibility = Visibility.Visible;
+            LoadingPanel.Visibility = Visibility.Collapsed;
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -60,7 +95,7 @@ namespace AIMeetDocument
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new Microsoft.Win32.OpenFileDialog
+            var dialog = new OpenFileDialog
             {
                 CheckFileExists = false,
                 CheckPathExists = true,
@@ -69,23 +104,24 @@ namespace AIMeetDocument
             };
             if (dialog.ShowDialog() == true)
             {
-                var path = System.IO.Path.GetDirectoryName(dialog.FileName);
+                var path = Path.GetDirectoryName(dialog.FileName);
                 LocationTextBox.Text = path;
             }
         }
 
-        private async Task StartProcess(string userPrompt,string audioFilePath, string language, CancellationToken cancellationToken)
+        private async Task<string> StartProcess(string userPrompt, string audioFilePath, string language,
+            CancellationToken cancellationToken)
         {
             string modelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LLM", "ggml-large-v3.bin");
             string fullText = "";
-            
+
             using (var whisperService = new WhisperService(modelPath))
             {
                 fullText = await whisperService.TranscribeAsync(audioFilePath, language, cancellationToken);
             }
 
             var llm = new LocalLanguageModelService();
-            var aIResult= await llm.GetChatCompletionAsync(userPrompt+fullText,cancellationToken);
+            return await llm.GetChatCompletionAsync(userPrompt + fullText, cancellationToken);
         }
     }
 }
