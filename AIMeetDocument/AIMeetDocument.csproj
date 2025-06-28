@@ -9,6 +9,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="DinkToPdf.Standard" Version="1.1.0" />
+        <PackageReference Include="DocumentFormat.OpenXml" Version="3.3.0" />
+        <PackageReference Include="HtmlToOpenXml.dll" Version="3.2.5" />
+        <PackageReference Include="Markdig" Version="0.41.3" />
         <PackageReference Include="MediaDevices" Version="1.10.0"/>
         <PackageReference Include="MediaDevices.Controls" Version="1.0.1"/>
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.6"/>
