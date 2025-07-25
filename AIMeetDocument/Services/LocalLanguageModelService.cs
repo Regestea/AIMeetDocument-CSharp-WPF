@@ -38,7 +38,9 @@ namespace AIMeetDocument.Services
 
             var options = new OpenAIClientOptions
             {
-                Endpoint = new Uri(serverUrl)
+                Endpoint = new Uri(serverUrl),
+                // Set the network timeout to 1 day
+                NetworkTimeout = TimeSpan.FromDays(1)
             };
 
             _client = new OpenAIClient(new ApiKeyCredential("no need"), options);
