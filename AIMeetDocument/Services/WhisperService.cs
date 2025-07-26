@@ -49,13 +49,9 @@ namespace AIMeetDocument.Services
             {
                 throw new FileNotFoundException("Audio file not found.", audioPath);
             }
-
-            string processedAudioPath = null;
+            
             try
             {
-                // Ensure the audio is in 16kHz WAV format, converting if necessary.
-                processedAudioPath = await EnsureWav16KHzAsync(audioPath);
-                
                 var fullTranscription = new System.Text.StringBuilder();
 
                 // Build the processor and configure it for transcription.
@@ -63,7 +59,7 @@ namespace AIMeetDocument.Services
                     .WithLanguage(language) // Automatic language detection
                     .Build();
 
-                await using var fileStream = File.OpenRead(processedAudioPath);
+                await using var fileStream = File.OpenRead(audioPath);
                 
                 // Process the audio file and stream the results.
                 await foreach (var result in processor.ProcessAsync(fileStream).WithCancellation(cancellationToken))
@@ -85,56 +81,9 @@ namespace AIMeetDocument.Services
                 Console.WriteLine($"Error during transcription: {ex.Message}");
                 throw;
             }
-            finally
-            {
-                // Clean up the temporary converted file if one was created.
-                if (processedAudioPath != null && processedAudioPath != audioPath && File.Exists(processedAudioPath))
-                {
-                    File.Delete(processedAudioPath);
-                }
-            }
         }
 
-        /// <summary>
-        /// Ensures that the input audio file is a WAV file with a 16kHz sample rate.
-        /// If it isn't, it converts the file using FFmpeg and saves it to a temporary path.
-        /// </summary>
-        /// <param name="inputPath">The path to the input audio file.</param>
-        /// <returns>The path to the compliant 16kHz WAV file (either the original or a temporary one).</returns>
-        private async Task<string> EnsureWav16KHzAsync(string inputPath)
-        {
-            if (Path.GetExtension(inputPath).Equals(".wav", StringComparison.OrdinalIgnoreCase))
-            {
-                using var reader = new WaveFileReader(inputPath);
-                if (reader.WaveFormat.SampleRate == 16000)
-                {
-                    return inputPath;
-                }
-            }
-            // Convert to 16kHz WAV
-            string tempPath = Path.Combine(Path.GetTempPath(), $"converted_{Guid.NewGuid()}.wav");
-            using (var reader = new AudioFileReader(inputPath))
-            {
-                var outFormat = new WaveFormat(16000, reader.WaveFormat.Channels);
-                var resampler = new NAudio.Wave.SampleProviders.WdlResamplingSampleProvider(reader, 16000);
-                using (var waveFileWriter = new WaveFileWriter(tempPath, outFormat))
-                {
-                    float[] buffer = new float[4096];
-                    int samplesRead;
-                    while ((samplesRead = resampler.Read(buffer, 0, buffer.Length)) > 0)
-                    {
-                        // Convert float samples to 16-bit PCM
-                        for (int i = 0; i < samplesRead; i++)
-                        {
-                            var sample = (short)(Math.Max(-1.0f, Math.Min(1.0f, buffer[i])) * short.MaxValue);
-                            waveFileWriter.WriteByte((byte)(sample & 0xff));
-                            waveFileWriter.WriteByte((byte)((sample >> 8) & 0xff));
-                        }
-                    }
-                }
-            }
-            return tempPath;
-        }
+
 
         /// <summary>
         /// Disposes the resources used by the WhisperService.
