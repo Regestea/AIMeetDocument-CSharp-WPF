@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Controls;
+using AIMeetDocument.DTOs;
+using AIMeetDocument.Enums;
+using AIMeetDocument.Services;
 using Microsoft.Extensions.Configuration;
 
 namespace AIMeetDocument
@@ -11,7 +13,7 @@ namespace AIMeetDocument
     public partial class SettingsPanel : UserControl
     {
         public event RoutedEventHandler BackClicked;
-        private const string AppSettingsPath = "appsettings.json";
+
 
         public SettingsPanel()
         {
@@ -26,21 +28,11 @@ namespace AIMeetDocument
 
         private void LoadSettings()
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            var settingsService = new SettingsService();
+            var settings = settingsService.GetSettings();
 
-            IConfiguration configuration = builder.Build();
-
-            var defaultAI = configuration["DefaultAI"];
-            var systemPrompt = configuration["SystemPrompt"];
-            var llmServerUrl = configuration["LLMStudio:ServerUrl"];
-            var llmModel = configuration["LLMStudio:Model"];
-            var geminiApiKey = configuration["Gemini:ApiKey"];
-            var geminiModel = configuration["Gemini:Model"];
-
-            // Set DefaultAI radio button
-            if (defaultAI == "Gemini")
+            // Set the DefaultAI radio button
+            if (settings.DefaultAI == DefaultAI.Gemini)
             {
                 GeminiRadioButton.IsChecked = true;
             }
@@ -50,39 +42,53 @@ namespace AIMeetDocument
             }
 
             // Set LLMStudio fields
-            ServerUrlTextBox.Text = llmServerUrl;
-            LLMStudioModelTextBox.Text = llmModel;
+            ServerUrlTextBox.Text = settings.LLMStudio.ServerUrl;
+            LLMStudioModelTextBox.Text = settings.LLMStudio.Model;
 
             // Set Gemini fields
-            ApiKeyTextBox.Text = geminiApiKey;
-            GeminiModelTextBox.Text = geminiModel;
+            ApiKeyTextBox.Text = settings.Gemini.ApiKey;
 
+            GeminiModelComboBox.SelectedIndex = settings.Gemini.Model switch
+            {
+                "Gemini-2.5-Flash" => 0,
+                "Gemini-2.5-Pro" => 1,
+                _ => -1 // Default to no selection if model is not recognized
+            };
             // Set SystemPrompt
-            SystemPromptTextBox.Text = systemPrompt;
+            SystemPromptTextBox.Text = settings.SystemPrompt;
+            ;
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            var settings = new
+            var settingsService = new SettingsService();
+            var settings = new Settings()
             {
-                DefaultAI = GeminiRadioButton.IsChecked == true ? "Gemini" : "LLMStudio",
+                DefaultAI = GeminiRadioButton.IsChecked == true ? DefaultAI.Gemini : DefaultAI.LLMStudio,
                 SystemPrompt = SystemPromptTextBox.Text,
-                Gemini = new
+                Gemini = new GeminiSettings()
                 {
                     ApiKey = ApiKeyTextBox.Text,
-                    Model = GeminiModelTextBox.Text
+                    Model = (GeminiModelComboBox.SelectedItem as ComboBoxItem)?.Content.ToString()
                 },
-                LLMStudio = new
+                LLMStudio = new LLMStudioSettings()
                 {
                     ServerUrl = ServerUrlTextBox.Text,
                     Model = LLMStudioModelTextBox.Text
-                }
+                },
             };
-            var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(AppSettingsPath, json);
+            settingsService.SaveSettings(settings);
+
             MessageBox.Show("Settings saved.");
         }
-        
+
+        private void ResetDefault_Click(object sender, RoutedEventArgs e)
+        {
+            var settingsService = new SettingsService();
+            settingsService.ResetSettings();
+            LoadSettings();
+        }
+
         private void AIProviderRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             UpdatePanelVisibility();

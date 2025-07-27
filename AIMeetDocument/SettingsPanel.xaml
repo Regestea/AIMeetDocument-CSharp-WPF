@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="768" d:DesignWidth="1360">
-    <Border Background="#212735" CornerRadius="28" Padding="45" Margin="0,0,0,0" Width="700" Height="700">
+    <Border Background="#212735" CornerRadius="28" Padding="45" Margin="0,0,0,0" Width="700" Height="700"
+            d:DesignHeight="900">
         <StackPanel>
             <TextBlock Text="Settings" FontSize="34" Foreground="#FCE49C" HorizontalAlignment="Center"
                        Margin="0,0,0,22" />
@@ -13,29 +14,126 @@
                 <TextBlock Text="AI Provider:" Foreground="#FCE49C" FontSize="17" />
                 <StackPanel Orientation="Horizontal" Margin="0,6,0,11">
                     <RadioButton x:Name="GeminiRadioButton" Content="Gemini" GroupName="AIProvider" Margin="0,0,22,0"
-                                 Checked="AIProviderRadioButton_Checked" FontSize="17" />
+                                 Checked="AIProviderRadioButton_Checked" FontSize="17" Foreground="#FCE49C" />
                     <RadioButton x:Name="LLMStudioRadioButton" Content="LLMStudio" GroupName="AIProvider"
-                                 Checked="AIProviderRadioButton_Checked" FontSize="17" />
+                                 Checked="AIProviderRadioButton_Checked" FontSize="17" Foreground="#FCE49C" />
                 </StackPanel>
                 <StackPanel x:Name="LLMStudioPanel">
                     <TextBlock Text="Server URL:" Foreground="#FCE49C" FontSize="17" />
-                    <TextBox x:Name="ServerUrlTextBox" Margin="0,6,0,11" FontSize="17" Height="34" />
+                    <TextBox x:Name="ServerUrlTextBox" Margin="0,6,0,11" FontSize="17" Height="34">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox">
+                                <Setter Property="BorderThickness" Value="2" />
+                                <Setter Property="BorderBrush" Value="#FCE49C" />
+                                <Setter Property="Background" Value="#fee79e" />
+                                <Setter Property="Foreground" Value="#212735" />
+                                <Setter Property="Padding" Value="8,2" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="TextBox">
+                                            <Border CornerRadius="12" BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    Background="{TemplateBinding Background}">
+                                                <ScrollViewer x:Name="PART_ContentHost" />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
                     <TextBlock Text="Model:" Foreground="#FCE49C" FontSize="17" />
-                    <TextBox x:Name="LLMStudioModelTextBox" Margin="0,6,0,11" FontSize="17" Height="34" />
+                    <TextBox x:Name="LLMStudioModelTextBox" Margin="0,6,0,11" FontSize="17" Height="34">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox">
+                                <Setter Property="BorderThickness" Value="2" />
+                                <Setter Property="BorderBrush" Value="#FCE49C" />
+                                <Setter Property="Background" Value="#fee79e" />
+                                <Setter Property="Foreground" Value="#212735" />
+                                <Setter Property="Padding" Value="8,2" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="TextBox">
+                                            <Border CornerRadius="12" BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    Background="{TemplateBinding Background}">
+                                                <ScrollViewer x:Name="PART_ContentHost" />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
                 </StackPanel>
                 <StackPanel x:Name="GeminiPanel">
                     <TextBlock Text="API Key:" Foreground="#FCE49C" FontSize="17" />
-                    <TextBox x:Name="ApiKeyTextBox" Margin="0,6,0,11" FontSize="17" Height="34" />
+                    <TextBox x:Name="ApiKeyTextBox" Margin="0,6,0,11" FontSize="17" Height="34">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox">
+                                <Setter Property="BorderThickness" Value="2" />
+                                <Setter Property="BorderBrush" Value="#FCE49C" />
+                                <Setter Property="Background" Value="#fee79e" />
+                                <Setter Property="Foreground" Value="#212735" />
+                                <Setter Property="Padding" Value="8,2" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="TextBox">
+                                            <Border CornerRadius="12" BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    Background="{TemplateBinding Background}">
+                                                <ScrollViewer x:Name="PART_ContentHost" />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
                     <TextBlock Text="Model:" Foreground="#FCE49C" FontSize="17" />
-                    <TextBox x:Name="GeminiModelTextBox" Margin="0,6,0,11" FontSize="17" Height="34" />
+                    <ComboBox x:Name="GeminiModelComboBox" Margin="0,6,0,11" Background="#fee79e" FontSize="17"
+                              Height="34">
+                        <ComboBoxItem Content="Gemini-2.5-Flash" />
+                        <ComboBoxItem Content="Gemini-2.5-Pro" />
+                    </ComboBox>
                 </StackPanel>
                 <TextBlock Text="System Prompt:" Foreground="#FCE49C" FontSize="17" />
-                <TextBox x:Name="SystemPromptTextBox" Margin="0,6,0,11" FontSize="17" Height="34" />
+                <TextBox x:Name="SystemPromptTextBox" Margin="0,6,0,11" FontSize="17" Height="160" MaxLength="3000"
+                         AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Background="#fee79e"
+                         TextWrapping="Wrap" MinLines="4">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Setter Property="BorderThickness" Value="2" />
+                            <Setter Property="BorderBrush" Value="#FCE49C" />
+                            <Setter Property="Background" Value="#fee79e" />
+                            <Setter Property="Foreground" Value="#212735" />
+                            <Setter Property="Padding" Value="8,2" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="TextBox">
+                                        <Border CornerRadius="12" BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                Background="{TemplateBinding Background}">
+                                            <ScrollViewer x:Name="PART_ContentHost" />
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Save" Style="{StaticResource ModernButton}" Click="Save_Click" Margin="0,0,11,0"
-                        FontSize="17" Height="34" MinWidth="84" />
-            </StackPanel>
+            <Grid VerticalAlignment="Bottom" Margin="0,30,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Button Content="Default" Style="{StaticResource ModernButton}" Click="ResetDefault_Click"
+                        FontSize="17" Height="34" MinWidth="84" HorizontalAlignment="Left" Grid.Column="0" />
+                <Button Content="Save" Style="{StaticResource ModernButton}" Click="Save_Click"
+                        FontSize="17" Height="34" MinWidth="84" HorizontalAlignment="Right" Grid.Column="1"
+                        Margin="30,0,0,0" />
+            </Grid>
         </StackPanel>
     </Border>
 </UserControl>
