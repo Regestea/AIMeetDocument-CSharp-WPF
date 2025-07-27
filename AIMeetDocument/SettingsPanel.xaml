@@ -24,7 +24,7 @@
                         <TextBox.Style>
                             <Style TargetType="TextBox">
                                 <Setter Property="BorderThickness" Value="2" />
-                                <Setter Property="BorderBrush" Value="#FCE49C" />
+                                <Setter Property="BorderBrush" Value="#efa449" />
                                 <Setter Property="Background" Value="#fee79e" />
                                 <Setter Property="Foreground" Value="#212735" />
                                 <Setter Property="Padding" Value="8,2" />
@@ -47,7 +47,7 @@
                         <TextBox.Style>
                             <Style TargetType="TextBox">
                                 <Setter Property="BorderThickness" Value="2" />
-                                <Setter Property="BorderBrush" Value="#FCE49C" />
+                                <Setter Property="BorderBrush" Value="#efa449" />
                                 <Setter Property="Background" Value="#fee79e" />
                                 <Setter Property="Foreground" Value="#212735" />
                                 <Setter Property="Padding" Value="8,2" />
@@ -72,7 +72,7 @@
                         <TextBox.Style>
                             <Style TargetType="TextBox">
                                 <Setter Property="BorderThickness" Value="2" />
-                                <Setter Property="BorderBrush" Value="#FCE49C" />
+                                <Setter Property="BorderBrush" Value="#efa449" />
                                 <Setter Property="Background" Value="#fee79e" />
                                 <Setter Property="Foreground" Value="#212735" />
                                 <Setter Property="Padding" Value="8,2" />
@@ -104,7 +104,7 @@
                     <TextBox.Style>
                         <Style TargetType="TextBox">
                             <Setter Property="BorderThickness" Value="2" />
-                            <Setter Property="BorderBrush" Value="#FCE49C" />
+                            <Setter Property="BorderBrush" Value="#efa449" />
                             <Setter Property="Background" Value="#fee79e" />
                             <Setter Property="Foreground" Value="#212735" />
                             <Setter Property="Padding" Value="8,2" />
