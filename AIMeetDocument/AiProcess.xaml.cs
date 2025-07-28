@@ -115,6 +115,10 @@ namespace AIMeetDocument
 
         private async void CancelButton_Click(object sender, RoutedEventArgs e)
         {
+            // Hide Cancel button, show Canceling text
+            CancelButton.Visibility = Visibility.Collapsed;
+            CancelingText.Visibility = Visibility.Visible;
+
             await _cts?.CancelAsync();
             if (_runningTask != null)
             {
@@ -128,6 +132,9 @@ namespace AIMeetDocument
                 }
             }
 
+            // Restore UI state
+            CancelingText.Visibility = Visibility.Collapsed;
+            CancelButton.Visibility = Visibility.Visible;
             ActionPanel.Visibility = Visibility.Visible;
             LoadingPanel.Visibility = Visibility.Collapsed;
             StartButton.IsEnabled = true;
@@ -215,14 +222,10 @@ namespace AIMeetDocument
             }
             catch (TaskCanceledException)
             {
-                MessageBox.Show("The operation was canceled.", "Canceled", MessageBoxButton.OK,
-                    MessageBoxImage.Information);
                 return string.Empty;
             }
             catch (OperationCanceledException)
             {
-                MessageBox.Show("The operation was canceled.", "Canceled", MessageBoxButton.OK,
-                    MessageBoxImage.Information);
                 return string.Empty;
             }
         }
