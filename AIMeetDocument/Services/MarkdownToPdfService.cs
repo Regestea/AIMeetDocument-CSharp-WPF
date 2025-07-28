@@ -6,13 +6,13 @@ namespace AIMeetDocument.Services;
 
 public class MarkdownToPdfService
 {
-    public void ConvertMarkdownStringToPdf(string markdownContent, string outputFilePath, PdfTextDirection direction = PdfTextDirection.LTR, PdfFontOptions? fontOptions = null)
+    public void ConvertMarkdownStringToPdf(string markdownContent, string outputFilePath, TextDirection direction = TextDirection.LTR, PdfFontOptions? fontOptions = null)
     {
         fontOptions ??= new PdfFontOptions();
         string htmlContent = Markdown.ToHtml(markdownContent);
         
         string bold = fontOptions.HeaderBold ? "font-weight:bold;" : "";
-        string dir = direction == PdfTextDirection.RTL ? "rtl" : "ltr";
+        string dir = direction == TextDirection.RTL ? "rtl" : "ltr";
         string defaultFontCss = $@"<style>
             html, body, h1, h2, h3, h4, h5, h6, p, div, span, ul, ol, li, table, th, td, blockquote, pre, code, strong, em, b, i, u, a, img, section, article, aside, header, footer, nav, main, figure, figcaption, details, summary, mark, small, sub, sup, caption, label, input, textarea, select, option, button, dl, dt, dd, hr, br, address, cite, abbr, acronym, del, ins, kbd, samp, var, s, strike, tt, big, center, fieldset, legend, form, output, progress, meter {{
                 font-family: '{fontOptions.GetFontFamilyName(fontOptions.DefaultFontFamily)}', 'Arial', sans-serif !important;

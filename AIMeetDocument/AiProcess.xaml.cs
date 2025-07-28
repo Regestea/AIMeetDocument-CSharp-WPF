@@ -62,6 +62,12 @@ namespace AIMeetDocument
                 if (!string.IsNullOrEmpty(resultContent))
                 {
                     var fileName = Guid.NewGuid();
+                    
+                    var textDirection = TextDirection.LTR;
+                    if (outputLanguage is "fa" or "ar")
+                    {
+                        textDirection = TextDirection.RTL;
+                    }
                     switch (fileType)
                     {
                         case "MD":
@@ -73,13 +79,13 @@ namespace AIMeetDocument
                         case "Word":
                             var wordService = new MarkdownToWordService();
                             string wordOutputPath = Path.Combine(location, $"{fileName}.docx");
-                            wordService.ConvertMarkdownStringToDocx(resultContent, wordOutputPath);
+                            wordService.ConvertMarkdownStringToDocx(resultContent, wordOutputPath,textDirection);
                             MessageBox.Show($"Word document saved to {wordOutputPath}");
                             break;
                         case "PDF":
                             var pdfService = new MarkdownToPdfService();
                             string pdfOutputPath = Path.Combine(location, $"{fileName}.pdf");
-                            pdfService.ConvertMarkdownStringToPdf(resultContent, pdfOutputPath);
+                            pdfService.ConvertMarkdownStringToPdf(resultContent, pdfOutputPath,textDirection);
                             MessageBox.Show($"PDF file saved to {pdfOutputPath}");
                             break;
                     }
