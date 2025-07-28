@@ -2,6 +2,7 @@
 using System.Text.Json;
 using AIMeetDocument.DTOs;
 using AIMeetDocument.Enums;
+using AIMeetDocument.StaticValues;
 using Microsoft.Extensions.Configuration;
 
 namespace AIMeetDocument.Services;
@@ -24,8 +25,7 @@ public class SettingsService
     {
         var settings = new Settings()
         {
-            DefaultAI = configuration["DefaultAI"] == "Gemini" ? DefaultAI.Gemini : DefaultAI.LLMStudio,
-            SystemPrompt = configuration["SystemPrompt"]!,
+            DefaultAI = configuration["DefaultAI"] == "1" ? DefaultAI.Gemini : DefaultAI.LLMStudio,
             Gemini = new GeminiSettings()
             {
                 ApiKey = configuration["Gemini:ApiKey"]!,
@@ -42,13 +42,7 @@ public class SettingsService
 
     public void SaveSettings(Settings settings)
     {
-        configuration["DefaultAI"] = settings.DefaultAI.ToString();
-        configuration["SystemPrompt"] = settings.SystemPrompt;
-        configuration["Gemini:ApiKey"] = settings.Gemini.ApiKey;
-        configuration["Gemini:Model"] = settings.Gemini.Model;
-        configuration["LLMStudio:ServerUrl"] = settings.LLMStudio.ServerUrl.EndsWith("/v1") ? settings.LLMStudio.ServerUrl : settings.LLMStudio.ServerUrl + "/v1";
-        configuration["LLMStudio:Model"] = settings.LLMStudio.Model;
-
+        settings.LLMStudio.ServerUrl= settings.LLMStudio.ServerUrl.EndsWith("/v1") ? settings.LLMStudio.ServerUrl : settings.LLMStudio.ServerUrl + "/v1";
         var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(AppSettingsPath, json);
     }
@@ -58,7 +52,6 @@ public class SettingsService
         var defaultSettings = new Settings
         {
             DefaultAI = DefaultAI.LLMStudio,
-            SystemPrompt = "You are a helpful AI assistant.",
             LLMStudio = new LLMStudioSettings
             {
                 ServerUrl = "http://127.0.0.1:2355/v1",
