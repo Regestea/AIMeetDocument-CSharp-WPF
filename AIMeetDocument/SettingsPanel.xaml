@@ -5,8 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="768" d:DesignWidth="1360">
-    <Border Background="#212735" CornerRadius="28" Padding="45" Margin="0,0,0,0" Width="700" Height="700"
-            d:DesignHeight="900">
+    <Border Background="#212735" CornerRadius="28" Padding="45" Margin="0,0,0,0" Width="700" Height="500"
+            d:DesignHeight="700">
         <StackPanel>
             <TextBlock Text="Settings" FontSize="34" Foreground="#FCE49C" HorizontalAlignment="Center"
                        Margin="0,0,0,22" />
@@ -91,8 +91,42 @@
                         </TextBox.Style>
                     </TextBox>
                     <TextBlock Text="Model:" Foreground="#FCE49C" FontSize="17" />
-                    <ComboBox x:Name="GeminiModelComboBox" Margin="0,6,0,11" Background="#fee79e" FontSize="17"
-                              Height="34">
+                    <ComboBox x:Name="GeminiModelComboBox" Margin="0,6,0,11" Height="39" MinWidth="168">
+                        <ComboBox.Style>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="FontSize" Value="16"/>
+                                <Setter Property="BorderBrush" Value="#efa449"/>
+                                <Setter Property="BorderThickness" Value="2"/>
+                                <Setter Property="Background" Value="#fadc93"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="5">
+                                                <Grid>
+                                                    <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false"
+                                                        IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                        ClickMode="Press"
+                                                        Background="Transparent"
+                                                        BorderThickness="0">
+                                                        <Path x:Name="Arrow" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z" Fill="#FFD600" Width="8" Height="4"/>
+                                                    </ToggleButton>
+                                                    <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="6,0,24,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                    <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                                        <Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="200" Background="#fadc94">
+                                                            <Border x:Name="DropDownBorder" BorderBrush="#FFD600" BorderThickness="2" CornerRadius="5" Background="#fadc94">
+                                                                <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                                                </ScrollViewer>
+                                                            </Border>
+                                                        </Grid>
+                                                    </Popup>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ComboBox.Style>
                         <ComboBoxItem Content="gemini-2.5-flash" />
                         <ComboBoxItem Content="gemini-2.5-pro" />
                     </ComboBox>
