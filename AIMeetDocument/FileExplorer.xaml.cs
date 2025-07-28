@@ -102,16 +102,12 @@ namespace AIMeetDocument
 
         private void SelectButton_Click(object sender, RoutedEventArgs e)
         {
-            if (FilesListBox.SelectedItem is FileInfo file)
+            if (FilesListBox.SelectedItem is not FileInfo file) return;
+            CopyFileToCache(file.ToString());
+            // Navigate to AiProcess and pass the file name
+            if (Application.Current.MainWindow is MainWindow mainWindow)
             {
-                var f = FilesListBox.SelectedItem as FileInfo;
-                CopyFileToCache(f.ToString());
-                // Navigate to AiProcess and pass the file name
-                var mainWindow = Application.Current.MainWindow as MainWindow;
-                if (mainWindow != null)
-                {
-                    mainWindow.NavigateToAiProccess(f.Name);
-                }
+                mainWindow.NavigateToAiProccess(file.Name);
             }
         }
 
@@ -133,6 +129,6 @@ namespace AIMeetDocument
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        private void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }
