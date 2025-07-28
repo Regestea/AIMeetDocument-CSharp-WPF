@@ -25,7 +25,7 @@
                             <Style TargetType="TextBox">
                                 <Setter Property="BorderThickness" Value="2" />
                                 <Setter Property="BorderBrush" Value="#efa449" />
-                                <Setter Property="Background" Value="#fee79e" />
+                                <Setter Property="Background" Value="#fadc93" />
                                 <Setter Property="Foreground" Value="#212735" />
                                 <Setter Property="Padding" Value="8,2" />
                                 <Setter Property="Template">
@@ -48,7 +48,7 @@
                             <Style TargetType="TextBox">
                                 <Setter Property="BorderThickness" Value="2" />
                                 <Setter Property="BorderBrush" Value="#efa449" />
-                                <Setter Property="Background" Value="#fee79e" />
+                                <Setter Property="Background" Value="#fadc93" />
                                 <Setter Property="Foreground" Value="#212735" />
                                 <Setter Property="Padding" Value="8,2" />
                                 <Setter Property="Template">
@@ -73,7 +73,7 @@
                             <Style TargetType="TextBox">
                                 <Setter Property="BorderThickness" Value="2" />
                                 <Setter Property="BorderBrush" Value="#efa449" />
-                                <Setter Property="Background" Value="#fee79e" />
+                                <Setter Property="Background" Value="#fadc93" />
                                 <Setter Property="Foreground" Value="#212735" />
                                 <Setter Property="Padding" Value="8,2" />
                                 <Setter Property="Template">
@@ -101,7 +101,7 @@
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="ComboBox">
-                                            <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="5">
+                                            <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="12">
                                                 <Grid>
                                                     <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false"
                                                         IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
@@ -113,7 +113,7 @@
                                                     <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="6,0,24,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                                                     <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
                                                         <Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="200" Background="#fadc94">
-                                                            <Border x:Name="DropDownBorder" BorderBrush="#FFD600" BorderThickness="2" CornerRadius="5" Background="#fadc94">
+                                                            <Border x:Name="DropDownBorder" BorderBrush="#FFD600" BorderThickness="2" CornerRadius="5" Background="#fce6ac">
                                                                 <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
                                                                     <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
                                                                 </ScrollViewer>
