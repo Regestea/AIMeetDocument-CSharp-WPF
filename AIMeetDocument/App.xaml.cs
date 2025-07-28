@@ -16,4 +16,10 @@ public partial class App : Application
         mainWindow.WindowState = WindowState.Maximized;
         mainWindow.Show();
     }
+
+    protected override void OnExit(ExitEventArgs e)
+    {
+        Services.WhisperService.DisposeFactory();
+        base.OnExit(e);
+    }
 }

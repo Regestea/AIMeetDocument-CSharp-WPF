@@ -15,9 +15,9 @@ namespace AIMeetDocument.Services
     /// </summary>
     public class WhisperService : IDisposable
     {
-        private readonly string _modelPath;
-        private readonly WhisperFactory _whisperFactory;
-        private readonly WhisperProcessor _whisperProcessor;
+        private static WhisperFactory? _sharedFactory;
+        private static string? _sharedModelPath;
+        private WhisperProcessor _whisperProcessor;
         private string _language = "en";
 
         /// <summary>
@@ -25,18 +25,23 @@ namespace AIMeetDocument.Services
         /// </summary>
         /// <param name="modelPath">The file path to the Whisper GGUF model.</param>
         /// <exception cref="FileNotFoundException">Thrown if the model file does not exist.</exception>
-        public WhisperService(string modelPath,string language = "en")
+        public WhisperService(string modelPath, string language = "en")
         {
             if (!File.Exists(modelPath))
             {
                 throw new FileNotFoundException("Whisper model file not found.", modelPath);
             }
             _language = language;
-            _modelPath = modelPath;
-            _whisperFactory = WhisperFactory.FromPath(_modelPath);
-            // Build the processor and configure it for transcription.
-            _whisperProcessor = _whisperFactory.CreateBuilder()
-                .WithLanguage(language) // Automatic language detection
+            // Only create the factory once per app lifetime
+            if (_sharedFactory == null || _sharedModelPath != modelPath)
+            {
+                _sharedFactory?.Dispose();
+                _sharedFactory = WhisperFactory.FromPath(modelPath);
+                _sharedModelPath = modelPath;
+            }
+            // Build a new processor for each service instance (thread safety)
+            _whisperProcessor = _sharedFactory.CreateBuilder()
+                .WithLanguage(language)
                 .Build();
         }
 
@@ -93,13 +98,25 @@ namespace AIMeetDocument.Services
         {
             try
             {
-                _whisperProcessor.Dispose();
-                if (_whisperFactory is IDisposable disposable)
-                {
-                    disposable.Dispose();
-                }
+                _whisperProcessor?.Dispose();
+                // Do NOT dispose _sharedFactory here; only on app exit
             }
-            catch (Exception e)
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        // Call this on app exit to free GPU memory
+        public static void DisposeFactory()
+        {
+            try
+            {
+                _sharedFactory?.Dispose();
+                _sharedFactory = null;
+                _sharedModelPath = null;
+            }
+            catch (Exception)
             {
                 // ignored
             }
