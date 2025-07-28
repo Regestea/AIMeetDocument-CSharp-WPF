@@ -1,16 +1,6 @@
 ﻿using System.IO;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Microsoft.Win32;
-using System.Threading.Tasks;
 using MediaDevices;
 using System.Collections.ObjectModel;
 
@@ -21,8 +11,6 @@ namespace AIMeetDocument;
 /// </summary>
 public partial class MainWindow : Window
 {
-    private bool isLoading = false;
-
     public ObservableCollection<MediaDeviceViewModel> MediaDevices { get; set; } =
         new ObservableCollection<MediaDeviceViewModel>();
 
@@ -89,12 +77,23 @@ public partial class MainWindow : Window
     {
         var dlg = new OpenFileDialog
         {
-            Multiselect = true,
-            Title = "Select Files"
+            Multiselect = false,
+            Title = "Select Audio File",
+            Filter = "Audio Files (*.mp3;*.wav;*.m4a)|*.mp3;*.wav;*.m4a"
         };
         if (dlg.ShowDialog() == true)
         {
-            MessageBox.Show($"Selected files:\n{string.Join("\n", dlg.FileNames)}", "Files Selected");
+            string selectedFilePath = dlg.FileName;
+            string fileName = Path.GetFileName(selectedFilePath);
+            // Copy the file to AudioCache if needed, or just pass the file name
+            // Here, we assume the file will be copied to AudioCache with the same name
+            string audioCacheDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AudioCache");
+            if (!Directory.Exists(audioCacheDir))
+                Directory.CreateDirectory(audioCacheDir);
+            string destPath = Path.Combine(audioCacheDir, fileName);
+            if (!File.Exists(destPath))
+                File.Copy(selectedFilePath, destPath, true);
+            NavigateToAiProccess(fileName);
         }
     }
 
