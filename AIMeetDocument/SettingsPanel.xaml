@@ -93,35 +93,10 @@
                     <TextBlock Text="Model:" Foreground="#FCE49C" FontSize="17" />
                     <ComboBox x:Name="GeminiModelComboBox" Margin="0,6,0,11" Background="#fee79e" FontSize="17"
                               Height="34">
-                        <ComboBoxItem Content="Gemini-2.5-Flash" />
-                        <ComboBoxItem Content="Gemini-2.5-Pro" />
+                        <ComboBoxItem Content="gemini-2.5-flash" />
+                        <ComboBoxItem Content="gemini-2.5-pro" />
                     </ComboBox>
                 </StackPanel>
-                <TextBlock Text="System Prompt:" Foreground="#FCE49C" FontSize="17" />
-                <TextBox x:Name="SystemPromptTextBox" Margin="0,6,0,11" FontSize="17" Height="160" MaxLength="3000"
-                         AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Background="#fee79e"
-                         TextWrapping="Wrap" MinLines="4">
-                    <TextBox.Style>
-                        <Style TargetType="TextBox">
-                            <Setter Property="BorderThickness" Value="2" />
-                            <Setter Property="BorderBrush" Value="#efa449" />
-                            <Setter Property="Background" Value="#fee79e" />
-                            <Setter Property="Foreground" Value="#212735" />
-                            <Setter Property="Padding" Value="8,2" />
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="TextBox">
-                                        <Border CornerRadius="12" BorderBrush="{TemplateBinding BorderBrush}"
-                                                BorderThickness="{TemplateBinding BorderThickness}"
-                                                Background="{TemplateBinding Background}">
-                                            <ScrollViewer x:Name="PART_ContentHost" />
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </TextBox.Style>
-                </TextBox>
             </StackPanel>
             <Grid VerticalAlignment="Bottom" Margin="0,30,0,0">
                 <Grid.ColumnDefinitions>

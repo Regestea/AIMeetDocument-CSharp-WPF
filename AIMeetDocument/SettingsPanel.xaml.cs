@@ -50,13 +50,11 @@ namespace AIMeetDocument
 
             GeminiModelComboBox.SelectedIndex = settings.Gemini.Model switch
             {
-                "Gemini-2.5-Flash" => 0,
-                "Gemini-2.5-Pro" => 1,
+                "gemini-2.5-flash" => 0,
+                "gemini-2.5-pro" => 1,
                 _ => -1 // Default to no selection if model is not recognized
             };
-            // Set SystemPrompt
-            SystemPromptTextBox.Text = settings.SystemPrompt;
-            ;
+            
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
@@ -65,7 +63,6 @@ namespace AIMeetDocument
             var settings = new Settings()
             {
                 DefaultAI = GeminiRadioButton.IsChecked == true ? DefaultAI.Gemini : DefaultAI.LLMStudio,
-                SystemPrompt = SystemPromptTextBox.Text,
                 Gemini = new GeminiSettings()
                 {
                     ApiKey = ApiKeyTextBox.Text,

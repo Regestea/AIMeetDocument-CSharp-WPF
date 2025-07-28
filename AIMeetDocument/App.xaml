@@ -1,8 +1,7 @@
 ﻿<Application x:Class="AIMeetDocument.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:AIMeetDocument"
-             StartupUri="MainWindow.xaml">
+             xmlns:local="clr-namespace:AIMeetDocument">
     <Application.Resources>
         <Style TargetType="{x:Type TextBlock}">
             <Setter Property="FontFamily" Value="Comic Sans MS, Arial, Segoe UI, Verdana, sans-serif"/>

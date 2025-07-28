@@ -1,10 +1,13 @@
 using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using AIMeetDocument.Services;
 using Microsoft.Win32;
 using System.Threading;
 using System.Threading.Tasks;
+using AIMeetDocument.Enums;
+using AIMeetDocument.StaticValues;
 
 namespace AIMeetDocument
 {
@@ -35,19 +38,19 @@ namespace AIMeetDocument
             ActionPanel.Visibility = Visibility.Collapsed;
             LoadingPanel.Visibility = Visibility.Visible;
 
-            string language = ((ComboBoxItem)LanguageCombo.SelectedItem).Tag.ToString()!;
+            string audioLanguage = ((ComboBoxItem)AudioLanguageCombo.SelectedItem).Tag.ToString()!;
+            string outputLanguage = ((ComboBoxItem)OutputLanguageCombo.SelectedItem).Tag.ToString()!;
             string fileType = ((ComboBoxItem)FileTypeCombo.SelectedItem).Content.ToString()!;
             string userPrompt = UserPromptTextBox.Text;
             string location = LocationTextBox.Text;
-
-            string msg =
-                $"File Name: {_fileName}\nLanguage: {language}\nFile Type: {fileType}\nSave Location: {location}\nPrompt: {userPrompt}";
+            string audioSubject = AudioSubjectTextBox.Text;
 
             var audioPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AudioCache", _fileName);
             if (File.Exists(audioPath))
             {
                 _cts = new CancellationTokenSource();
-                var resultContent = await StartProcess(userPrompt, audioPath, language!, _cts.Token);
+                var resultContent = await StartProcess(userPrompt, audioPath, audioSubject, audioLanguage,
+                    outputLanguage, _cts.Token);
                 if (_cts.IsCancellationRequested)
                 {
                     MessageBox.Show("Process was cancelled.");
@@ -55,16 +58,16 @@ namespace AIMeetDocument
                     LoadingPanel.Visibility = Visibility.Collapsed;
                     return;
                 }
-                
+
                 if (!string.IsNullOrEmpty(resultContent))
                 {
                     var fileName = Guid.NewGuid();
                     switch (fileType)
                     {
-                        case "Markdown":
-                            var markdownService = new MarkdownToPdfService();
-                            string outputFilePath = Path.Combine(location, $"{fileName}.pdf");
-                            markdownService.ConvertMarkdownStringToPdf(resultContent, outputFilePath);
+                        case "MD":
+                            var markdownService = new MarkdownToMdFileService();
+                            string outputFilePath = Path.Combine(location, $"{fileName}.md");
+                            markdownService.SaveMarkdownToFile(resultContent, outputFilePath);
                             MessageBox.Show($"Markdown file saved to {outputFilePath}");
                             break;
                         case "Word":
@@ -82,6 +85,7 @@ namespace AIMeetDocument
                     }
                 }
             }
+
             ActionPanel.Visibility = Visibility.Visible;
             LoadingPanel.Visibility = Visibility.Collapsed;
         }
@@ -109,20 +113,61 @@ namespace AIMeetDocument
             }
         }
 
-        private async Task<string> StartProcess(string userPrompt, string audioFilePath, string language,
+        private async Task<string> StartProcess(string userPrompt, string audioFilePath, string audioSubject,
+            string audioLanguage, string outputLanguage,
             CancellationToken cancellationToken)
         {
             string modelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LLM", "ggml-large-v3-turbo.bin");
-            string fullText = "";
+            var textPartList = new List<string>();
 
-            
+            var audioCutService = new AudioCutService();
+            var AudioAnalysisService = new AudioAnalysisService();
+            var silenceSeconds = AudioAnalysisService.GetAvgMinThreshold(audioFilePath);
+            var secondPeaks = AudioAnalysisService.GetSilenceSeconds(audioFilePath, 3, silenceSeconds);
+            var audioPartsPath = audioCutService.CutAudioBySeconds(audioFilePath, secondPeaks);
+
             using (var whisperService = new WhisperService(modelPath))
             {
-                fullText = await whisperService.TranscribeAsync(audioFilePath, language, cancellationToken);
+                foreach (var audioPartPath in audioPartsPath)
+                {
+                    var text = await whisperService.TranscribeAsync(audioPartPath, audioLanguage, cancellationToken);
+                    textPartList.Add(text);
+                }
             }
 
-            var llm = new LocalLanguageModelService();
-            return await llm.GetChatCompletionAsync(userPrompt + fullText, cancellationToken);
+            audioCutService.CleanAudioChunksCache();
+
+
+            var systemPrompt = new SystemPromptBuilder(audioSubject, outputLanguage, userPrompt);
+            var settingsService = new SettingsService();
+            var settings = settingsService.GetSettings();
+            var fullText = new StringBuilder();
+            if (settings.DefaultAI == DefaultAI.LLMStudio)
+            {
+                var llm = new LocalLanguageModelService();
+                foreach (var text in textPartList)
+                {
+                    var llmResult =
+                        await llm.GetChatCompletionAsync(systemPrompt.DefaultSystemPrompt, text, cancellationToken);
+                    fullText.Append(llmResult);
+                }
+            }
+            else
+            {
+                var gemini = new GeminiService();
+                foreach (var text in textPartList)
+                {
+                    var geminiResult =
+                        await gemini.GetChatCompletionAsync(systemPrompt.DefaultSystemPrompt + text, cancellationToken);
+                    fullText.Append(geminiResult);
+                    await Task.Delay(10000, cancellationToken);
+                }
+            }
+
+
+            var finalText = fullText.ToString();
+
+            return finalText;
         }
     }
 }
