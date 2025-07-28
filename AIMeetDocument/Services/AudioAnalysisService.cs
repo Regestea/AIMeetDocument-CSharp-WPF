@@ -11,7 +11,7 @@ public class AudioAnalysisService
     /// <param name="filePath">The path to the audio file (e.g., .mp3, .wav).</param>
     /// <returns>Array of SecondPeakLevel objects per second.</returns>
     /// 0.025494637
-    public static List<int> GetSilenceSeconds(string filePath, int minSilenceSecond = 3, float silenceThreshold = 0.03f)
+    public static List<int> GetSilenceSeconds(string filePath, int minSilenceSecond = 3, float silenceThreshold = 0.03f, CancellationToken cancellationToken = default)
     {
         var peaks = new List<SecondSilenceStatus>();
         var silentIntervals = new List<int>();
@@ -25,6 +25,7 @@ public class AudioAnalysisService
                 int samplesRead, currentSecond = 0;
                 while ((samplesRead = reader.Read(buffer, 0, buffer.Length)) > 0)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     float maxAmplitude = buffer.Take(samplesRead).Select(Math.Abs).DefaultIfEmpty(0f).Max();
                     peaks.Add(new SecondSilenceStatus { Second = currentSecond, Silence = maxAmplitude < silenceThreshold });
                     if (peaks.Count >= minSilenceSecond)
@@ -55,7 +56,7 @@ public class AudioAnalysisService
         return silentIntervals;
     }
      
-    public float GetAvgMinThreshold(string filePath)
+    public float GetAvgMinThreshold(string filePath, CancellationToken cancellationToken = default)
     {
         var thresholds = new List<float>();
         try
@@ -67,6 +68,7 @@ public class AudioAnalysisService
                 int samplesRead;
                 while ((samplesRead = reader.Read(buffer, 0, buffer.Length)) > 0)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     float maxAmplitude = buffer.Take(samplesRead).Select(Math.Abs).DefaultIfEmpty(0f).Max();
                     thresholds.Add(maxAmplitude);
                 }

@@ -64,6 +64,7 @@ namespace AIMeetDocument
                             StartButton.IsEnabled = true;
                             return;
                         }
+
                         if (!string.IsNullOrEmpty(resultContent))
                         {
                             var fileName = Guid.NewGuid();
@@ -72,6 +73,7 @@ namespace AIMeetDocument
                             {
                                 textDirection = TextDirection.RTL;
                             }
+
                             switch (fileType)
                             {
                                 case "MD":
@@ -83,7 +85,8 @@ namespace AIMeetDocument
                                 case "Word":
                                     var wordService = new MarkdownToWordService();
                                     string wordOutputPath = Path.Combine(location, $"{fileName}.docx");
-                                    wordService.ConvertMarkdownStringToDocx(resultContent, wordOutputPath, textDirection);
+                                    wordService.ConvertMarkdownStringToDocx(resultContent, wordOutputPath,
+                                        textDirection);
                                     MessageBox.Show($"Word document saved to {wordOutputPath}");
                                     break;
                                 case "PDF":
@@ -94,6 +97,7 @@ namespace AIMeetDocument
                                     break;
                             }
                         }
+
                         ActionPanel.Visibility = Visibility.Visible;
                         LoadingPanel.Visibility = Visibility.Collapsed;
                         StartButton.IsEnabled = true;
@@ -111,11 +115,19 @@ namespace AIMeetDocument
 
         private async void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            _cts?.Cancel();
+            await _cts?.CancelAsync();
             if (_runningTask != null)
             {
-                try { await _runningTask; } catch { /* ignore */ }
+                try
+                {
+                    await _runningTask;
+                }
+                catch
+                {
+                    /* ignore */
+                }
             }
+
             ActionPanel.Visibility = Visibility.Visible;
             LoadingPanel.Visibility = Visibility.Collapsed;
             StartButton.IsEnabled = true;
@@ -143,14 +155,21 @@ namespace AIMeetDocument
         {
             try
             {
-                string modelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LLM", "ggml-large-v3-turbo.bin");
+                string modelPath =
+                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LLM", "ggml-large-v3-turbo.bin");
                 var textPartList = new List<string>();
 
                 var audioCutService = new AudioCutService();
                 var AudioAnalysisService = new AudioAnalysisService();
-                var silenceSeconds = AudioAnalysisService.GetAvgMinThreshold(audioFilePath);
-                var secondPeaks = AudioAnalysisService.GetSilenceSeconds(audioFilePath, 3, silenceSeconds);
-                var audioPartsPath = audioCutService.CutAudioBySeconds(audioFilePath, secondPeaks);
+                var silenceSeconds = AudioAnalysisService.GetAvgMinThreshold(audioFilePath, cancellationToken);
+                var secondPeaks =
+                    AudioAnalysisService.GetSilenceSeconds(audioFilePath, 3, silenceSeconds, cancellationToken);
+                var audioPartsPath = audioCutService.CutAudioBySeconds(audioFilePath, secondPeaks, cancellationToken);
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    audioCutService.CleanAudioChunksCache();
+                    return string.Empty;
+                }
 
                 using (var whisperService = new WhisperService(modelPath, audioLanguage))
                 {
@@ -184,22 +203,26 @@ namespace AIMeetDocument
                     foreach (var text in textPartList)
                     {
                         var geminiResult =
-                            await gemini.GetChatCompletionAsync(systemPrompt.DefaultSystemPrompt + text, cancellationToken);
+                            await gemini.GetChatCompletionAsync(systemPrompt.DefaultSystemPrompt + text,
+                                cancellationToken);
                         fullText.Append(geminiResult);
                         await Task.Delay(10000, cancellationToken);
                     }
                 }
+
                 var finalText = fullText.ToString();
                 return finalText;
             }
             catch (TaskCanceledException)
             {
-                MessageBox.Show("The operation was canceled.", "Canceled", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("The operation was canceled.", "Canceled", MessageBoxButton.OK,
+                    MessageBoxImage.Information);
                 return string.Empty;
             }
             catch (OperationCanceledException)
             {
-                MessageBox.Show("The operation was canceled.", "Canceled", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("The operation was canceled.", "Canceled", MessageBoxButton.OK,
+                    MessageBoxImage.Information);
                 return string.Empty;
             }
         }

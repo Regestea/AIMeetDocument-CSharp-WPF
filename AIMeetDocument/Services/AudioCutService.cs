@@ -40,7 +40,7 @@ public class AudioCutService
         return tempPath;
     }
 
-    public List<string> CutAudioBySeconds(string audioFilePath, List<int> seconds)
+    public List<string> CutAudioBySeconds(string audioFilePath, List<int> seconds, CancellationToken cancellationToken = default)
     {
         var outputPaths = new List<string>();
         var projectDir = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location)!.Parent!.Parent!.FullName;
@@ -55,6 +55,7 @@ public class AudioCutService
             allCuts.Add((int)reader.TotalTime.TotalSeconds);
             for (int i = 0; i < allCuts.Count - 1; i++)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 int startSec = allCuts[i];
                 int endSec = allCuts[i + 1];
                 string chunkPath = Path.Combine(cacheDir, $"chunk_{i + 1}.wav");
