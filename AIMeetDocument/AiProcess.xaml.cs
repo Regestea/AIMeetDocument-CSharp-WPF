@@ -213,7 +213,7 @@ namespace AIMeetDocument
                             await gemini.GetChatCompletionAsync(systemPrompt.DefaultSystemPrompt + text,
                                 cancellationToken);
                         fullText.Append(geminiResult);
-                        await Task.Delay(10000, cancellationToken);
+                        await Task.Delay(18000, cancellationToken);
                     }
                 }
 
