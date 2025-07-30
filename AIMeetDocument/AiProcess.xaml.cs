@@ -118,6 +118,7 @@ namespace AIMeetDocument
             // Hide Cancel button, show Canceling text
             CancelButton.Visibility = Visibility.Collapsed;
             CancelingText.Visibility = Visibility.Visible;
+            
 
             await _cts?.CancelAsync();
             if (_runningTask != null)
@@ -135,6 +136,7 @@ namespace AIMeetDocument
             // Restore UI state
             CancelingText.Visibility = Visibility.Collapsed;
             CancelButton.Visibility = Visibility.Visible;
+            
             ActionPanel.Visibility = Visibility.Visible;
             LoadingPanel.Visibility = Visibility.Collapsed;
             StartButton.IsEnabled = true;
@@ -180,15 +182,40 @@ namespace AIMeetDocument
 
                 using (var whisperService = new WhisperService(modelPath, audioLanguage))
                 {
-                    foreach (var audioPartPath in audioPartsPath)
+                    Dispatcher.Invoke(() => {
+                        WhisperProgressBar.Visibility = Visibility.Visible;
+                        WhisperProgressText.Visibility = Visibility.Visible;
+                        GeminiProgressText.Visibility = Visibility.Collapsed;
+                        WhisperProgressBar.Value = 0;
+                        WhisperProgressText.Text = "0%";
+                    });
+                    int totalParts = audioPartsPath.Count;
+                    for (int i = 0; i < totalParts; i++)
                     {
-                        var text = await whisperService.TranscribeAsync(audioPartPath, cancellationToken);
+                        var audioPartPath = audioPartsPath[i];
+                        var progress = new Progress<double>(partProgress =>
+                        {
+                            double overallProgress = ((double)i + partProgress / 100.0) / totalParts * 100.0;
+                            Dispatcher.Invoke(() => {
+                                WhisperProgressBar.Value = overallProgress;
+                                WhisperProgressText.Text = $"{(int)overallProgress}%";
+                            });
+                        });
+                        var text = await whisperService.TranscribeAsync(audioPartPath, progress, cancellationToken);
                         textPartList.Add(text);
                     }
+                    Dispatcher.Invoke(() => {
+                        WhisperProgressBar.Visibility = Visibility.Collapsed;
+                        WhisperProgressText.Visibility = Visibility.Collapsed;
+                    });
                 }
 
                 audioCutService.CleanAudioChunksCache();
 
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return string.Empty;
+                }
 
                 var systemPrompt = new SystemPromptBuilder(audioSubject, outputLanguage, userPrompt);
                 var settingsService = new SettingsService();
@@ -206,15 +233,25 @@ namespace AIMeetDocument
                 }
                 else
                 {
+                    Dispatcher.Invoke(() => {
+                        GeminiProgressText.Visibility = Visibility.Visible;
+                    });
                     var gemini = new GeminiService();
-                    foreach (var text in textPartList)
+                    for (int i = 0; i < textPartList.Count; i++)
                     {
+                        int remain = textPartList.Count - i;
+                        Dispatcher.Invoke(() => {
+                            GeminiProgressText.Text = $"Finish in about {remain * 18}s";
+                        });
                         var geminiResult =
-                            await gemini.GetChatCompletionAsync(systemPrompt.DefaultSystemPrompt + text,
+                            await gemini.GetChatCompletionAsync(systemPrompt.DefaultSystemPrompt + textPartList[i],
                                 cancellationToken);
                         fullText.Append(geminiResult);
                         await Task.Delay(18000, cancellationToken);
                     }
+                    Dispatcher.Invoke(() => {
+                        GeminiProgressText.Visibility = Visibility.Collapsed;
+                    });
                 }
 
                 var finalText = fullText.ToString();
@@ -222,10 +259,14 @@ namespace AIMeetDocument
             }
             catch (TaskCanceledException)
             {
+                Console.WriteLine("canceled task exeption");
+                
                 return string.Empty;
             }
             catch (OperationCanceledException)
             {
+                Console.WriteLine("cancel operation exeption");
+                
                 return string.Empty;
             }
         }

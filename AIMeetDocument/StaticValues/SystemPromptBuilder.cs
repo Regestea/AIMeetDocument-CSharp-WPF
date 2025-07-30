@@ -16,7 +16,7 @@ public class SystemPromptBuilder
                                     * **Content Enrichment:** If the topic requires it for clarity, you may add relevant examples or brief explanations to enhance the pamphlet's content.
                                     * **Language:** The pamphlet must be written in `{language}`.
                                     * **Terminology:** If the original conversation language is different from `{language}`, do not translate specific terminology, jargon, or technical terms. Keep them in the original language.
-                                    * **Relevance Check:** If the conversation contains no relevant information about `{subject}`, do not generate a pamphlet. Instead, respond with the single sentence: "The conversation provided does not contain relevant information on the specified subject."
+                                    * **Relevance Check:** If the conversation contains no relevant information about `{subject}`, do not generate a pamphlet. Instead, respond with ."
 
                                 Here is the conversation:
                                 """;

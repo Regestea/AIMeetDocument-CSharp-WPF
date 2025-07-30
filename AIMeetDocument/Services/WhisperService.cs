@@ -46,14 +46,15 @@ namespace AIMeetDocument.Services
         }
 
         /// <summary>
-        /// Transcribes the audio from the given file path.
+        /// Transcribes an audio file and reports progress.
         /// </summary>
-        /// <param name="audioPath">The path to the audio file to transcribe.</param>
-        /// <param name="cancellationToken">token to cancel the task</param>
-        /// <returns>A Task representing the asynchronous transcription operation. The result will be the full transcribed text.</returns>
-        /// <exception cref="FileNotFoundException">Thrown if the audio file does not exist.</exception>
-        /// <exception cref="Exception">Propagates exceptions from the transcription process.</exception>
-        public async Task<string> TranscribeAsync(string audioPath,
+        /// <param name="audioPath">The path to the audio file.</param>
+        /// <param name="progress">An optional provider to report progress percentage (0.0 to 100.0).</param>
+        /// <param name="cancellationToken">A cancellation token.</param>
+        /// <returns>The full transcription text.</returns>
+        public async Task<string> TranscribeAsync(
+            string audioPath,
+            IProgress<double> progress = null,
             CancellationToken cancellationToken = default)
         {
             if (!File.Exists(audioPath))
@@ -65,15 +66,28 @@ namespace AIMeetDocument.Services
             {
                 var fullTranscription = new System.Text.StringBuilder();
 
-
+                // Open the file and get its total size
                 await using var fileStream = File.OpenRead(audioPath);
+                long totalBytes = fileStream.Length;
 
                 // Process the audio file and stream the results.
                 await foreach (var result in _whisperProcessor.ProcessAsync(fileStream, cancellationToken))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
+
+                    // Calculate progress and report it if a progress handler is provided
+                    if (totalBytes > 0)
+                    {
+                        // Calculate percentage from current position and total size
+                        double percentage = (double)fileStream.Position / totalBytes * 100;
+                        progress?.Report(percentage);
+                    }
+
                     fullTranscription.AppendLine(result.Text);
                 }
+
+                // Report 100% completion at the end
+                progress?.Report(100.0);
 
                 return fullTranscription.ToString();
             }

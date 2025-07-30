@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="1200">
-    <Border Background="#212735" CornerRadius="28" Padding="45" Margin="22,0,0,0" Height="830" Width="850"
+    <Border Background="#212735" CornerRadius="28" Padding="45" Margin="22,0,0,0" Height="880" Width="850"
             Effect="{DynamicResource CardDropShadow}">
         <Border.BorderBrush>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -224,7 +224,7 @@
 
             <!-- User Prompt Text Area -->
             <TextBlock Text="Extera Prompt" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="18"/>
-            <TextBox x:Name="UserPromptTextBox" Height="80" Margin="0,6,0,17" AcceptsReturn="True" TextWrapping="Wrap" FontSize="16" BorderBrush="#efa449" BorderThickness="2" Background="#fcdc93">
+            <TextBox x:Name="UserPromptTextBox" Height="50" Margin="0,6,0,17" AcceptsReturn="True" TextWrapping="Wrap" FontSize="16" BorderBrush="#efa449" BorderThickness="2" Background="#fcdc93">
                 <TextBox.Style>
                     <Style TargetType="TextBox">
                         <Setter Property="FontSize" Value="16"/>
@@ -244,6 +244,19 @@
                 </TextBox.Style>
             </TextBox>
 
+            <!-- Whisper Progress Bar with Percentage -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,8">
+                <ProgressBar x:Name="WhisperProgressBar" Height="8" Width="168"
+                             Foreground="#F29D3A" Background="#FFF3E0" Visibility="Collapsed"
+                             Minimum="0" Maximum="100" Value="60"
+                             Style="{DynamicResource ModernProgressBar}"/>
+                <TextBlock x:Name="WhisperProgressText" Text="0%" FontSize="16" FontWeight="Bold"
+                           Foreground="#F29D3A" Margin="12,0,0,0" VerticalAlignment="Center"
+                           Visibility="Collapsed"/>
+                <TextBlock x:Name="GeminiProgressText" Text="" FontSize="16" FontWeight="Bold"
+                           Foreground="#F29D3A" Margin="12,0,0,0" VerticalAlignment="Center"
+                           Visibility="Collapsed"/>
+            </StackPanel>
             <!-- Start Button Centered -->
             <StackPanel x:Name="ActionPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,17,0,0">
                 <Button x:Name="StartButton" Content="Start" Height="50" Width="168" Style="{DynamicResource ModernButton}" Cursor="Hand" FontSize="22"/>
