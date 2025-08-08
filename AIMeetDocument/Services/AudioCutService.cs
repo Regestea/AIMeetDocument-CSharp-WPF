@@ -74,6 +74,7 @@ public class AudioCutService
                 outputPaths.Add(chunkPath);
             }
         }
+        File.Delete(wav16kPath);
         return outputPaths;
     }
 

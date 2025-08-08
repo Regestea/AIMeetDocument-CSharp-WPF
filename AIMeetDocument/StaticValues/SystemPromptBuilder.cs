@@ -8,22 +8,38 @@ public class SystemPromptBuilder
                                 {(string.IsNullOrWhiteSpace(userPrompt) ? "" : $"userPrompt: {userPrompt}\n")}
                                 System:
                                     Your task is to transform a conversation transcript into an informative pamphlet. Follow these rules precisely:
-                                    
-                                    * **Final Output:** The entire response must be the pamphlet itself, formatted in Markdown. Do not include any introductory phrases like "Here is the pamphlet."
-                                    * **Subject Focus:** The pamphlet must be exclusively about the subject: `{subject}`. Ignore all parts of the conversation that are off-topic.
-                                    * **Content Extraction:** Extract the most important points, arguments, and details from the conversation. The goal is a detailed and structured document, not a brief summary.
-                                    * **Pamphlet Structure:** The pamphlet should be well-structured with a main title, headings for different sections, and the use of bullet points or lists to organize information.
-                                    * **Content Enrichment:** If the topic requires it for clarity, you may add relevant examples or brief explanations to enhance the pamphlet's content.
-                                    * **Language:** The pamphlet must be written in `{language}`.
-                                    * **Terminology:** If the original conversation language is different from `{language}`, do not translate specific terminology, jargon, or technical terms. Keep them in the original language.
-                                    * **Relevance Check:** If the conversation contains no relevant information about `{subject}`, do not generate a pamphlet. Instead, respond with ."
-
+                                    Final Output: The entire response must be the pamphlet itself, formatted in Markdown."
+                                    Content Extraction: Extract the most important points, arguments, and details from the conversation. The goal is a detailed and structured document, not a brief summary.
+                                    Pamphlet Structure: The pamphlet should be well-structured with a main title, headings for different sections, and the use of bullet points or lists to organize information.
+                                    Content Enrichment: If the topic requires it for clarity, you may add relevant examples or brief explanations to enhance the pamphlet's content.
+                                    Language: The pamphlet must be written in `{language}`.
+                                    Terminology: If the original conversation language is different from `{language}`, do not translate specific terminology, jargon, or technical terms. Keep them in the original language.
                                 Here is the conversation:
                                 """;
     }
 
     public readonly string DefaultSystemPrompt;
 }
+
+
+// DefaultSystemPrompt = $"""
+//                        {(string.IsNullOrWhiteSpace(userPrompt) ? "" : $"userPrompt: {userPrompt}\n")}
+//                        System:
+//                            Your task is to transform a conversation transcript into an informative pamphlet. Follow these rules precisely:
+//                            Final Output: The entire response must be the pamphlet itself, formatted in Markdown. Do not include any introductory phrases like "Here is the pamphlet."
+//                            Subject Focus: The pamphlet must be exclusively about the subject: `{subject}`. Ignore all parts of the conversation that are off-topic.
+//                            Content Extraction: Extract the most important points, arguments, and details from the conversation. The goal is a detailed and structured document, not a brief summary.
+//                            Pamphlet Structure: The pamphlet should be well-structured with a main title, headings for different sections, and the use of bullet points or lists to organize information.
+//                            Content Enrichment: If the topic requires it for clarity, you may add relevant examples or brief explanations to enhance the pamphlet's content.
+//                            Language: The pamphlet must be written in `{language}`.
+//                            Terminology: If the original conversation language is different from `{language}`, do not translate specific terminology, jargon, or technical terms. Keep them in the original language.
+//                            
+//                        Here is the conversation:
+//                        """;
+
+
+//* **Relevance Check:** If the conversation contains no relevant information about `{subject}`, do not generate a pamphlet. Instead, respond with ."
+
 
 // System:
 // # ROLE

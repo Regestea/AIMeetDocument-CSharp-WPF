@@ -22,13 +22,27 @@ public class GeminiService
             var model = new GenerativeModel(model: _settings.Gemini.Model, apiKey: _settings.Gemini.ApiKey);
 
             var response = await model.GenerateContentAsync(prompt, cancellationToken);
-
-
+            // console log with warning color
+            Console.WriteLine("-------------------------------------------------------");
+            if (response.Text.Length < 1000)
+            {
+                Console.WriteLine("warning");
+                Console.WriteLine(response.Text);
+            }
+            Console.WriteLine("-------------------------------------------------------");
+            
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Passed Prompt Size: " + prompt.Length + " Response Size: " + response.Text.Length);
+            Console.ResetColor();
             return response.Text;
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"An error occurred: {ex.Message}");
+            var errorText = $"An error occurred: {ex.Message} prompt Length: {prompt.Length}";
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(errorText);
+            Console.ResetColor();
+            // MessageBox.Show(errorText, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         return null;

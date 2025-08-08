@@ -13,6 +13,7 @@ public class AudioAnalysisService
     /// 0.025494637
     public static List<int> GetSilenceSeconds(string filePath, int minSilenceSecond = 3, float silenceThreshold = 0.03f, CancellationToken cancellationToken = default)
     {
+        var closeSeconds = 600; // 10 min
         var peaks = new List<SecondSilenceStatus>();
         var silentIntervals = new List<int>();
         int p1 = 0, p2 = minSilenceSecond;
@@ -33,7 +34,7 @@ public class AudioAnalysisService
                         int silenceCount = peaks.Skip(p1).Take(minSilenceSecond).Count(x => x.Silence);
                         if (silenceCount > minSilenceSecond / 2)
                         {
-                            if (!silentIntervals.Any() || p1 - silentIntervals.Last() > 300)
+                            if (!silentIntervals.Any() || p1 - silentIntervals.Last() > closeSeconds)
                                 silentIntervals.Add(p1);
                         }
                         p1++;

@@ -107,7 +107,7 @@ namespace AIMeetDocument
             // Navigate to AiProcess and pass the file name
             if (Application.Current.MainWindow is MainWindow mainWindow)
             {
-                mainWindow.NavigateToAiProccess(file.Name);
+                mainWindow.NavigateToAiProccess([file.Name]);
             }
         }
 

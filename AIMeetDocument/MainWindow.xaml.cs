@@ -77,23 +77,26 @@ public partial class MainWindow : Window
     {
         var dlg = new OpenFileDialog
         {
-            Multiselect = false,
+            Multiselect = true, // Enable multiple file selection
             Title = "Select Audio File",
             Filter = "Audio Files (*.mp3;*.wav;*.m4a)|*.mp3;*.wav;*.m4a"
         };
         if (dlg.ShowDialog() == true)
         {
-            string selectedFilePath = dlg.FileName;
-            string fileName = Path.GetFileName(selectedFilePath);
-            // Copy the file to AudioCache if needed, or just pass the file name
-            // Here, we assume the file will be copied to AudioCache with the same name
+            var selectedFilePaths = dlg.FileNames;
+            var fileNames = new List<string>();
             string audioCacheDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AudioCache");
             if (!Directory.Exists(audioCacheDir))
                 Directory.CreateDirectory(audioCacheDir);
-            string destPath = Path.Combine(audioCacheDir, fileName);
-            if (!File.Exists(destPath))
-                File.Copy(selectedFilePath, destPath, true);
-            NavigateToAiProccess(fileName);
+            foreach (var selectedFilePath in selectedFilePaths)
+            {
+                string fileName = Path.GetFileName(selectedFilePath);
+                string destPath = Path.Combine(audioCacheDir, fileName);
+                if (!File.Exists(destPath))
+                    File.Copy(selectedFilePath, destPath, true);
+                fileNames.Add(fileName);
+            }
+            NavigateToAiProccess(fileNames); // Pass list of file names
         }
     }
 
@@ -150,13 +153,13 @@ public partial class MainWindow : Window
         FileExplorerUC.Path = path;
     }
 
-    public void NavigateToAiProccess(string fileName)
+    public void NavigateToAiProccess(List<string> fileNameList)
     {
         ClearComponents();
         if (AiProccessUC != null)
         {
             AiProccessUC.Visibility = Visibility.Visible;
-            AiProccessUC.SetFileName(fileName);
+            AiProccessUC.SetFileName(fileNameList);
         }
     }
 }
