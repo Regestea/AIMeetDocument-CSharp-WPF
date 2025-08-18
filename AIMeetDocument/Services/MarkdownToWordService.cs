@@ -1,161 +1,176 @@
 using System.IO;
+using System.Text.RegularExpressions;
+using AIMeetDocument.DTOs;
 using AIMeetDocument.Enums;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using HtmlToOpenXml;
+using Markdig;
 using TextDirection = AIMeetDocument.Enums.TextDirection;
 
 namespace AIMeetDocument.Services;
 
 public class MarkdownToWordService
 {
-    public void ConvertMarkdownStringToDocx(string markdownContent, string outputFilePath, TextDirection direction = TextDirection.LTR, WordFontOptions? fontOptions = null)
+    public void ConvertMarkdownStringToDocx(string markdownContent, string outputFilePath, TextDirection direction = TextDirection.LTR, FontOptions? fontOptions = null)
     {
-        fontOptions ??= new WordFontOptions();
+        fontOptions ??= FontOptions.CreateDefaults();
         string htmlContent = Markdig.Markdown.ToHtml(markdownContent);
-        
-        string defaultFontCss = $@"<style>body {{ font-family: '{fontOptions.GetFontFamilyName(fontOptions.DefaultFontFamily)}', 'Arial', 'Calibri', 'Segoe UI', sans-serif; font-size: {fontOptions.DefaultFontSizePt}pt; font-style: {fontOptions.GetFontStyleCss(fontOptions.DefaultFontStyle)}; }}</style>";
-        htmlContent = defaultFontCss + htmlContent;
 
         using (MemoryStream mem = new MemoryStream())
         {
-            using (WordprocessingDocument wordDoc = WordprocessingDocument.Create(mem, DocumentFormat.OpenXml.WordprocessingDocumentType.Document, true))
+            using (WordprocessingDocument wordDoc = WordprocessingDocument.Create(mem, WordprocessingDocumentType.Document, true))
             {
                 MainDocumentPart mainPart = wordDoc.AddMainDocumentPart();
                 mainPart.Document = new Document(new Body());
-                
-                var stylePart = mainPart.AddNewPart<StyleDefinitionsPart>();
-                stylePart.Styles = new Styles(
-                    new DocDefaults(
-                        new RunPropertiesDefault(
-                            new RunPropertiesBaseStyle(
-                                new RunFonts { Ascii = fontOptions.GetFontFamilyName(fontOptions.DefaultFontFamily), HighAnsi = fontOptions.GetFontFamilyName(fontOptions.DefaultFontFamily), EastAsia = fontOptions.GetFontFamilyName(fontOptions.DefaultFontFamily), ComplexScript = fontOptions.GetFontFamilyName(fontOptions.DefaultFontFamily) },
-                                new FontSize { Val = (fontOptions.DefaultFontSizePt * 2).ToString() },
-                                fontOptions.DefaultFontStyle == WordFontStyle.Italic ? new Italic() : null
-                            )
-                        )
-                    ),
-                    new Style(
-                        new StyleName { Val = "Normal" },
-                        new BasedOn { Val = "Normal" },
-                        new UIPriority { Val = 1 },
-                        new PrimaryStyle(),
-                        new StyleRunProperties(
-                            new RunFonts { Ascii = fontOptions.GetFontFamilyName(fontOptions.DefaultFontFamily), HighAnsi = fontOptions.GetFontFamilyName(fontOptions.DefaultFontFamily), EastAsia = fontOptions.GetFontFamilyName(fontOptions.DefaultFontFamily), ComplexScript = fontOptions.GetFontFamilyName(fontOptions.DefaultFontFamily) },
-                            new FontSize { Val = (fontOptions.DefaultFontSizePt * 2).ToString() },
-                            fontOptions.DefaultFontStyle == WordFontStyle.Italic ? new Italic() : null
-                        )
-                    ) { Type = StyleValues.Paragraph, StyleId = "Normal" },
-                    // Heading1 style
-                    new Style(
-                        new StyleName { Val = "heading 1" },
-                        new BasedOn { Val = "Normal" },
-                        new NextParagraphStyle { Val = "Normal" },
-                        new UIPriority { Val = 9 },
-                        new PrimaryStyle(),
-                        new StyleParagraphProperties(
-                            new KeepNext(),
-                            new KeepLines(),
-                            new SpacingBetweenLines { Before = "480", After = "0" },
-                            new OutlineLevel { Val = 0 }
-                        ),
-                        new StyleRunProperties(
-                            new RunFonts { Ascii = fontOptions.GetFontFamilyName(fontOptions.HeaderFontFamily), HighAnsi = fontOptions.GetFontFamilyName(fontOptions.HeaderFontFamily), EastAsia = fontOptions.GetFontFamilyName(fontOptions.HeaderFontFamily), ComplexScript = fontOptions.GetFontFamilyName(fontOptions.HeaderFontFamily) },
-                            fontOptions.HeaderBold ? new Bold() : null,
-                            new FontSize { Val = (fontOptions.Header1FontSizePt * 2).ToString() },
-                            fontOptions.HeaderFontStyle == WordFontStyle.Italic ? new Italic() : null
-                        )
-                    ) { Type = StyleValues.Paragraph, StyleId = "Heading1" },
-                    // Heading2 style
-                    new Style(
-                        new StyleName { Val = "heading 2" },
-                        new BasedOn { Val = "Normal" },
-                        new NextParagraphStyle { Val = "Normal" },
-                        new UIPriority { Val = 9 },
-                        new PrimaryStyle(),
-                        new StyleParagraphProperties(
-                            new KeepNext(),
-                            new KeepLines(),
-                            new SpacingBetweenLines { Before = "400", After = "0" },
-                            new OutlineLevel { Val = 1 }
-                        ),
-                        new StyleRunProperties(
-                            new RunFonts { Ascii = fontOptions.GetFontFamilyName(fontOptions.HeaderFontFamily), HighAnsi = fontOptions.GetFontFamilyName(fontOptions.HeaderFontFamily), EastAsia = fontOptions.GetFontFamilyName(fontOptions.HeaderFontFamily), ComplexScript = fontOptions.GetFontFamilyName(fontOptions.HeaderFontFamily) },
-                            fontOptions.HeaderBold ? new Bold() : null,
-                            new FontSize { Val = (fontOptions.Header2FontSizePt * 2).ToString() },
-                            fontOptions.HeaderFontStyle == WordFontStyle.Italic ? new Italic() : null
-                        )
-                    ) { Type = StyleValues.Paragraph, StyleId = "Heading2" },
-                    // Heading3 style
-                    new Style(
-                        new StyleName { Val = "heading 3" },
-                        new BasedOn { Val = "Normal" },
-                        new NextParagraphStyle { Val = "Normal" },
-                        new UIPriority { Val = 9 },
-                        new PrimaryStyle(),
-                        new StyleParagraphProperties(
-                            new KeepNext(),
-                            new KeepLines(),
-                            new SpacingBetweenLines { Before = "320", After = "0" },
-                            new OutlineLevel { Val = 2 }
-                        ),
-                        new StyleRunProperties(
-                            new RunFonts { Ascii = fontOptions.GetFontFamilyName(fontOptions.HeaderFontFamily), HighAnsi = fontOptions.GetFontFamilyName(fontOptions.HeaderFontFamily), EastAsia = fontOptions.GetFontFamilyName(fontOptions.HeaderFontFamily), ComplexScript = fontOptions.GetFontFamilyName(fontOptions.HeaderFontFamily) },
-                            fontOptions.HeaderBold ? new Bold() : null,
-                            new FontSize { Val = (fontOptions.Header3FontSizePt * 2).ToString() },
-                            fontOptions.HeaderFontStyle == WordFontStyle.Italic ? new Italic() : null
-                        )
-                    ) { Type = StyleValues.Paragraph, StyleId = "Heading3" },
-                    // Heading4 style
-                    new Style(
-                        new StyleName { Val = "heading 4" },
-                        new BasedOn { Val = "Normal" },
-                        new NextParagraphStyle { Val = "Normal" },
-                        new UIPriority { Val = 9 },
-                        new PrimaryStyle(),
-                        new StyleParagraphProperties(
-                            new KeepNext(),
-                            new KeepLines(),
-                            new SpacingBetweenLines { Before = "240", After = "0" },
-                            new OutlineLevel { Val = 3 }
-                        ),
-                        new StyleRunProperties(
-                            new RunFonts { Ascii = fontOptions.GetFontFamilyName(fontOptions.HeaderFontFamily), HighAnsi = fontOptions.GetFontFamilyName(fontOptions.HeaderFontFamily), EastAsia = fontOptions.GetFontFamilyName(fontOptions.HeaderFontFamily), ComplexScript = fontOptions.GetFontFamilyName(fontOptions.HeaderFontFamily) },
-                            fontOptions.HeaderBold ? new Bold() : null,
-                            new FontSize { Val = (fontOptions.Header4FontSizePt * 2).ToString() },
-                            fontOptions.HeaderFontStyle == WordFontStyle.Italic ? new Italic() : null
-                        )
-                    ) { Type = StyleValues.Paragraph, StyleId = "Heading4" }
-                );
-                
-                var sectionProps = mainPart.Document.Body.GetFirstChild<SectionProperties>() ?? new SectionProperties();
-                sectionProps.RemoveAllChildren<BiDi>();
-                if (direction == TextDirection.RTL)
-                {
-                    sectionProps.AppendChild(new BiDi());
-                }
-                if (mainPart.Document.Body.GetFirstChild<SectionProperties>() == null)
-                    mainPart.Document.Body.AppendChild(sectionProps);
-                
+
+                CreateDocumentStyles(mainPart, fontOptions);
+                SetTextDirection(mainPart.Document.Body, direction);
+
                 var converter = new HtmlConverter(mainPart);
-                var paragraphs = converter.Parse(htmlContent);
-                
-                foreach (var p in paragraphs)
+
+                // --- NEW: Process the document by splitting it into normal parts and code blocks ---
+                // This pattern splits the HTML by <pre> blocks, but keeps the blocks in the resulting array.
+                string[] parts = Regex.Split(htmlContent, @"(<pre>[\s\S]*?</pre>)");
+
+                foreach (string part in parts)
                 {
-                    if (p is Paragraph para)
+                    if (string.IsNullOrWhiteSpace(part)) continue;
+
+                    // Check if this part is a code block.
+                    if (part.StartsWith("<pre"))
                     {
-                        var pPr = para.ParagraphProperties ?? new ParagraphProperties();
-                        pPr.RemoveAllChildren<BiDi>();
-                        if (direction == TextDirection.RTL)
-                        {
-                            pPr.AppendChild(new BiDi());
-                        }
-                        para.ParagraphProperties = pPr;
+                        // It's a code block, so we handle it manually for perfect formatting.
+                        var codeMatch = Regex.Match(part, @"<code[^>]*>([\s\S]*?)</code>");
+                        string codeText = codeMatch.Success ? codeMatch.Groups[1].Value : "";
+
+                        mainPart.Document.Body.Append(CreateFormattedCodeBlock(codeText));
+                    }
+                    else
+                    {
+                        // It's a normal HTML part, so let the converter handle it.
+                        var elements = converter.Parse(part);
+                        mainPart.Document.Body.Append(elements);
                     }
                 }
-                mainPart.Document.Body.Append(paragraphs);
             }
+            
             File.WriteAllBytes(outputFilePath, mem.ToArray());
+        }
+    }
+    
+    /// <summary>
+    /// Manually creates a Paragraph for a code block, preserving all line breaks.
+    /// </summary>
+    private static Paragraph CreateFormattedCodeBlock(string codeContent)
+    {
+        var paragraph = new Paragraph(
+            new ParagraphProperties(
+                new ParagraphStyleId() { Val = "Code" } // Apply the "Code" paragraph style
+            ));
+
+        // HTML-decode the content to handle characters like &lt; and &gt;
+        string decodedCode = System.Net.WebUtility.HtmlDecode(codeContent);
+        var lines = decodedCode.Split('\n');
+
+        for (int i = 0; i < lines.Length; i++)
+        {
+            var run = new Run(
+                new Text(lines[i]) { Space = SpaceProcessingModeValues.Preserve }
+            );
+            paragraph.Append(run);
+
+            if (i < lines.Length - 1)
+            {
+                paragraph.Append(new Run(new Break()));
+            }
+        }
+        return paragraph;
+    }
+
+    // --- The Style Definition Methods below are unchanged ---
+
+    private static void CreateDocumentStyles(MainDocumentPart mainPart, FontOptions options)
+    {
+        var stylePart = mainPart.AddNewPart<StyleDefinitionsPart>();
+        stylePart.Styles = new Styles();
+
+        var runDefaults = new RunPropertiesDefault(
+            new RunPropertiesBaseStyle(
+                new RunFonts { Ascii = options.GetFontFamilyName(options.DefaultFontFamily), HighAnsi = options.GetFontFamilyName(options.DefaultFontFamily) },
+                new FontSize { Val = (options.DefaultFontSizePt * 2).ToString() }
+            )
+        );
+        stylePart.Styles.Append(new DocDefaults(runDefaults));
+
+        var normalStyle = new Style(
+            new StyleName { Val = "Normal" },
+            new PrimaryStyle()
+        ) { Type = StyleValues.Paragraph, StyleId = "Normal", Default = true };
+        stylePart.Styles.Append(normalStyle);
+
+        stylePart.Styles.Append(CreateHeadingStyle("1", options.Header1FontSizePt, options));
+        stylePart.Styles.Append(CreateHeadingStyle("2", options.Header2FontSizePt, options));
+        stylePart.Styles.Append(CreateHeadingStyle("3", options.Header3FontSizePt, options));
+        stylePart.Styles.Append(CreateHeadingStyle("4", options.Header4FontSizePt, options));
+
+        stylePart.Styles.Append(CreateCodeBlockStyle());
+        stylePart.Styles.Append(CreateInlineCodeStyle());
+    }
+    
+    private static Style CreateHeadingStyle(string level, int fontSizePt, FontOptions options)
+    {
+        return new Style(
+            new StyleName { Val = $"heading {level}" },
+            new BasedOn { Val = "Normal" },
+            new NextParagraphStyle { Val = "Normal" },
+            new StyleRunProperties(
+                new RunFonts { Ascii = options.GetFontFamilyName(options.HeaderFontFamily), HighAnsi = options.GetFontFamilyName(options.HeaderFontFamily) },
+                options.HeaderBold ? new Bold() : null,
+                new FontSize { Val = (fontSizePt * 2).ToString() }
+            )
+        ) { Type = StyleValues.Paragraph, StyleId = $"Heading{level}" };
+    }
+    
+    private static Style CreateCodeBlockStyle()
+    {
+        return new Style(
+            new StyleName { Val = "Code" },
+            new BasedOn { Val = "Normal" },
+            new StyleParagraphProperties(
+                new Shading() { Val = ShadingPatternValues.Clear, Fill = "F1F1F1" },
+                new SpacingBetweenLines() { Before = "120", After = "120" }
+            ),
+            new StyleRunProperties(
+                new RunFonts { Ascii = "Courier New", HighAnsi = "Courier New" },
+                new FontSize { Val = "20" }
+            )
+        ) { Type = StyleValues.Paragraph, StyleId = "Code" };
+    }
+    
+    private static Style CreateInlineCodeStyle()
+    {
+        return new Style(
+            new StyleName { Val = "Code Char" },
+            new StyleRunProperties(
+                new RunFonts { Ascii = "Courier New", HighAnsi = "Courier New" },
+                new Shading() { Val = ShadingPatternValues.Clear, Fill = "F5F5F5" },
+                new FontSize { Val = "19" }
+            )
+        ) { Type = StyleValues.Character, StyleId = "CodeChar" };
+    }
+
+    private static void SetTextDirection(Body body, TextDirection direction)
+    {
+        var sectionProps = body.GetFirstChild<SectionProperties>() ?? new SectionProperties();
+        if (direction == TextDirection.RTL)
+        {
+            sectionProps.AppendChild(new BiDi());
+        }
+        if (body.GetFirstChild<SectionProperties>() == null)
+        {
+            body.AppendChild(sectionProps);
         }
     }
 }

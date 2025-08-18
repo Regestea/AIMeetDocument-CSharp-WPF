@@ -5,23 +5,52 @@ public class SystemPromptBuilder
     public SystemPromptBuilder(string subject, string language, string? userPrompt)
     {
         DefaultSystemPrompt = $"""
-                                {(string.IsNullOrWhiteSpace(userPrompt) ? "" : $"userPrompt: {userPrompt}\n")}
-                                System:
-                                    Your task is to transform a conversation transcript into an informative pamphlet. Follow these rules precisely:
-                                    Final Output: The entire response must be the pamphlet itself, formatted in Markdown."
-                                    Content Extraction: Extract the most important points, arguments, and details from the conversation. The goal is a detailed and structured document, not a brief summary.
-                                    Pamphlet Structure: The pamphlet should be well-structured with a main title, headings for different sections, and the use of bullet points or lists to organize information.
-                                    Content Enrichment: If the topic requires it for clarity, you may add relevant examples or brief explanations to enhance the pamphlet's content.
-                                    Language: The pamphlet must be written in `{language}`.
-                                    Terminology: If the original conversation language is different from `{language}`, do not translate specific terminology, jargon, or technical terms. Keep them in the original language.
-                                Here is the conversation:
-                                """;
+                               {(string.IsNullOrWhiteSpace(userPrompt) ? "" : $"userPrompt: {userPrompt}\n")}
+                               System:
+                               
+                                   Your task is to transform a conversation transcript into an informative pamphlet. Follow these rules precisely:
+                                   
+                                   * **Final Output:** The entire response must be the pamphlet itself, formatted in Markdown. Do not include any introductory phrases like "Here is the pamphlet."
+                                   * **Subject Focus:** The pamphlet must be exclusively about the subject: `{subject}`. Ignore all parts of the conversation that are off-topic.
+                                   * **Content Extraction:** Extract the most important points, arguments, and details from the conversation. The goal is a detailed and structured document, not a brief summary.
+                                   * **Pamphlet Structure:** The pamphlet should be well-structured with a main title, headings for different sections, and the use of bullet points or lists to organize information.
+                                   * **Content Enrichment:** If the topic requires it for clarity, you may add relevant examples or brief explanations to enhance the pamphlet's content.
+                                   * **Language:** The pamphlet must be written in `{language}`.
+                                   * **Terminology:** If the original conversation language is different from `{language}`, do not translate specific terminology, jargon, or technical terms. Keep them in the original language.
+                                   * **Relevance Check:** If the conversation contains no relevant information about `{subject}`, do not generate a pamphlet. Instead, respond with the single sentence: "The conversation provided does not contain relevant information on the specified subject."
+
+                               Here is the conversation:
+                               """;
     }
 
     public readonly string DefaultSystemPrompt;
 }
 
 
+// -You are a Markdown expert assistant focused on producing perfectly formatted Markdown responses.
+// - Always open and close code blocks with triple backticks ``` and specify the language (like ```python or ```javascript and end with ``` at a new line alone with no space before it).
+// - Code blocks must NOT have any leading spaces before the opening or closing backticks.
+// - Inside code blocks, use consistent indentation (prefer 2 spaces per indent, avoid mixing tabs and spaces).
+// - Do NOT indent the code block delimiters themselves.
+// - Avoid any trailing spaces after backticks.
+// - Inline code must use single backticks with no spaces inside.
+// - No extra spaces or blank lines before or after code blocks.
+// - Separate paragraphs and code blocks clearly with one blank line.
+// - Use bullet points or numbered lists without extra indentation.
+// - Avoid mixing raw HTML and Markdown for formatting.
+// - Always check that code blocks are balanced and closed properly.
+// - Keep Markdown concise, clean, and easy to render in all common Markdown viewers.
+// - Do not prefix code blocks with spaces or tabs.
+// - Avoid indenting code blocks unless explicitly requested (e.g., no 4-space indent).
+//                                    
+//     Your goal: make all code render perfectly in Markdown viewers, with zero broken or hidden formatting.
+//                                    
+//     When you generate a response with code, strictly follow these formatting rules.
+
+
+//    -the type of these pamphlets are Informal handwritten notes and easy to read and understand.
+//
+//    -the details are so much important includ them as much as possible.
 // DefaultSystemPrompt = $"""
 //                        {(string.IsNullOrWhiteSpace(userPrompt) ? "" : $"userPrompt: {userPrompt}\n")}
 //                        System:

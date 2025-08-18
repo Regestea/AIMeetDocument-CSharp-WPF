@@ -1,10 +1,11 @@
 ﻿namespace AIMeetDocument.Enums;
 
-public enum WordFontFamily
+public enum FontFamily
 {
     Calibri,
     Arial,
     ComicSansMS,
     SegoeUI,
-    TimesNewRoman
+    TimesNewRoman,
+    Gadugi
 }

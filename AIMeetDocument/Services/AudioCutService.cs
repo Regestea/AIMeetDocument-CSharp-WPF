@@ -40,30 +40,52 @@ public class AudioCutService
         return tempPath;
     }
 
-    public List<string> CutAudioBySeconds(string audioFilePath, List<int> seconds, CancellationToken cancellationToken = default)
-    {
-        var outputPaths = new List<string>();
-        var projectDir = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location)!.Parent!.Parent!.FullName;
-        var cacheDir = Path.Combine(projectDir, "AudioChunksCache");
-        Directory.CreateDirectory(cacheDir);
+public List<string> CutAudioBySeconds(string audioFilePath, List<int> seconds, CancellationToken cancellationToken = default)
+{
+    var outputPaths = new List<string>();
+    var projectDir = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location)!.Parent!.Parent!.FullName;
+    var cacheDir = Path.Combine(projectDir, "AudioChunksCache");
+    Directory.CreateDirectory(cacheDir);
 
-        string wav16kPath = EnsureWav16KHz(audioFilePath);
+    string wav16kPath = EnsureWav16KHz(audioFilePath);
+    // Use a try/finally block for robust cleanup, as recommended previously
+    bool isTempFile = !wav16kPath.Equals(audioFilePath, StringComparison.OrdinalIgnoreCase);
+    try
+    {
         using (var reader = new WaveFileReader(wav16kPath))
         {
+            // ✅ **FIX: Clean, sort, and validate the incoming timestamps**
+            var validCutSeconds = seconds
+                .Where(s => s >= 0 && s < reader.TotalTime.TotalSeconds) // Ensure timestamps are non-negative and within the audio's duration
+                .Distinct()                                             // Remove duplicates
+                .OrderBy(s => s)                                        // Sort ascending
+                .ToList();
+
             var allCuts = new List<int> { 0 };
-            allCuts.AddRange(seconds);
-            allCuts.Add((int)reader.TotalTime.TotalSeconds);
+            allCuts.AddRange(validCutSeconds);
+            // Ensure the final cut goes to the very end of the audio
+            if (!allCuts.Contains((int)reader.TotalTime.TotalSeconds))
+            {
+                allCuts.Add((int)reader.TotalTime.TotalSeconds);
+            }
+            
+            // The rest of your loop is correct
             for (int i = 0; i < allCuts.Count - 1; i++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 int startSec = allCuts[i];
                 int endSec = allCuts[i + 1];
-                string chunkPath = Path.Combine(cacheDir, $"chunk_{i + 1}.wav");
-                int startPos = (int)(startSec * reader.WaveFormat.SampleRate);
-                int endPos = (int)(endSec * reader.WaveFormat.SampleRate);
-                int bytesToRead = (endPos - startPos) * reader.WaveFormat.BlockAlign;
 
-                reader.Position = startPos * reader.WaveFormat.BlockAlign;
+                // Add a sanity check to avoid zero-length clips if duplicates existed (e.g., 0, 5, 5, 10)
+                if (startSec >= endSec) continue;
+
+                string chunkPath = Path.Combine(cacheDir, $"chunk_{i + 1}.wav");
+                long startPos = (long)startSec * reader.WaveFormat.AverageBytesPerSecond;
+                long endPos = (long)endSec * reader.WaveFormat.AverageBytesPerSecond;
+                
+                // Set position and read data
+                reader.Position = startPos;
+                long bytesToRead = endPos - startPos;
                 byte[] buffer = new byte[bytesToRead];
                 int read = reader.Read(buffer, 0, buffer.Length);
 
@@ -74,9 +96,16 @@ public class AudioCutService
                 outputPaths.Add(chunkPath);
             }
         }
-        File.Delete(wav16kPath);
-        return outputPaths;
     }
+    finally
+    {
+        if (isTempFile && File.Exists(wav16kPath))
+        {
+            File.Delete(wav16kPath);
+        }
+    }
+    return outputPaths;
+}
 
     /// <summary>
     /// Deletes all files inside the AudioChunksCache folder.

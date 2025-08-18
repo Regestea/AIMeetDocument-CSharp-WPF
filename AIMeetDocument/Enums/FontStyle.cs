@@ -1,6 +1,6 @@
 ﻿namespace AIMeetDocument.Enums;
 
-public enum WordFontStyle
+public enum FontStyle
 {
     Normal,
     Italic

@@ -35,6 +35,9 @@ namespace AIMeetDocument
             StartButton.Click += StartButton_Click;
             CancelButton.Click += CancelButton_Click;
             BrowseButton.Click += BrowseButton_Click;
+            
+            // Load audio detection models
+            LoadAudioDetectionModels();
         }
 
         public void SetFileName(List<string> fileNameList)
@@ -186,8 +189,13 @@ namespace AIMeetDocument
         {
             try
             {
-                string modelPath =
-                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LLM", "ggml-large-v3-turbo.bin");
+                // Get the selected audio detection model from the combo box
+                string selectedModelPath = GetSelectedAudioDetectionModel();
+                
+                // If no model is selected or the path is empty, use the default model
+                string modelPath = !string.IsNullOrEmpty(selectedModelPath) 
+                    ? selectedModelPath 
+                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LLM", "ggml-large-v3-turbo.bin");
                 var textPartList = new List<string>();
                 var audioCutService = new AudioCutService();
                 var AudioAnalysisService = new AudioAnalysisService();
@@ -269,12 +277,19 @@ namespace AIMeetDocument
                     for (int i = 0; i < arrangedList.Count; i++)
                     {
                         int remain = arrangedList.Count - i;
-                        Dispatcher.Invoke(() => { GeminiProgressText.Text = $"Finish in about {remain * 23}s"; });
+                        int delayMs = 15000; // default for Gemini25Pro
+                        int etaSeconds = 23 * remain; // default for Gemini25Pro
+                        if (settings.Gemini.Model == GeminiModel.Gemini25Flash)
+                        {
+                            delayMs = 8000;
+                            etaSeconds = 15 * remain;
+                        }
+                        Dispatcher.Invoke(() => { GeminiProgressText.Text = $"Finish in about {etaSeconds}s"; });
                         var geminiResult =
                             await gemini.GetChatCompletionAsync(systemPrompt.DefaultSystemPrompt + arrangedList[i],
                                 cancellationToken);
                         fullText.Append(geminiResult);
-                        await Task.Delay(18000, cancellationToken);
+                        await Task.Delay(delayMs, cancellationToken);
                     }
 
                     Dispatcher.Invoke(() => { GeminiProgressText.Visibility = Visibility.Collapsed; });
@@ -295,6 +310,101 @@ namespace AIMeetDocument
 
                 return string.Empty;
             }
+        }
+
+        /// <summary>
+        /// Loads audio detection models from the LLM folder
+        /// </summary>
+        private void LoadAudioDetectionModels()
+        {
+            try
+            {
+                // Get the LLM folder path (next to the executable)
+                string llmFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LLM");
+                
+                // Check if the LLM folder exists
+                if (!Directory.Exists(llmFolderPath))
+                {
+                    // Create the folder if it doesn't exist
+                    Directory.CreateDirectory(llmFolderPath);
+                }
+
+                // Get all .bin files from the LLM folder
+                string[] binFiles = Directory.GetFiles(llmFolderPath, "*.bin");
+
+                // Clear existing items
+                AudioDetectionModelCombo.Items.Clear();
+
+                if (binFiles.Length == 0)
+                {
+                    // Add a default item if no .bin files found
+                    var defaultItem = new ComboBoxItem
+                    {
+                        Content = "No models found",
+                        Tag = string.Empty,
+                        IsEnabled = false
+                    };
+                    AudioDetectionModelCombo.Items.Add(defaultItem);
+                    AudioDetectionModelCombo.SelectedIndex = 0;
+                }
+                else
+                {
+                    // Add each .bin file as a ComboBoxItem
+                    foreach (string binFile in binFiles)
+                    {
+                        string fileName = Path.GetFileName(binFile);
+                        var item = new ComboBoxItem
+                        {
+                            Content = fileName,
+                            Tag = binFile // Store the full path in Tag
+                        };
+                        AudioDetectionModelCombo.Items.Add(item);
+                    }
+
+                    // Select the first item by default
+                    if (AudioDetectionModelCombo.Items.Count > 0)
+                    {
+                        AudioDetectionModelCombo.SelectedIndex = 0;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle any errors gracefully
+                Console.WriteLine($"Error loading audio detection models: {ex.Message}");
+                
+                // Add a fallback item
+                AudioDetectionModelCombo.Items.Clear();
+                var errorItem = new ComboBoxItem
+                {
+                    Content = "Error loading models",
+                    Tag = string.Empty,
+                    IsEnabled = false
+                };
+                AudioDetectionModelCombo.Items.Add(errorItem);
+                AudioDetectionModelCombo.SelectedIndex = 0;
+            }
+        }
+
+        /// <summary>
+        /// Gets the selected audio detection model path
+        /// </summary>
+        /// <returns>The full path to the selected model file, or empty string if none selected</returns>
+        public string GetSelectedAudioDetectionModel()
+        {
+            if (AudioDetectionModelCombo.SelectedItem is ComboBoxItem selectedItem)
+            {
+                return selectedItem.Tag?.ToString() ?? string.Empty;
+            }
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Refreshes the audio detection models list from the LLM folder
+        /// </summary>
+        public void RefreshAudioDetectionModels()
+        {
+            LoadAudioDetectionModels();
         }
     }
 }

@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="900" d:DesignWidth="1200">
-    <Border Background="#212735" CornerRadius="28" Padding="45" Margin="22,0,0,0" Height="845" Width="850"
+             d:DesignHeight="765" d:DesignWidth="1020">
+    <Border Background="#212735" CornerRadius="24" Padding="38" Margin="19,0,0,0" Height="818" Width="823"
             Effect="{DynamicResource CardDropShadow}">
         <Border.BorderBrush>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -13,228 +13,444 @@
                 <GradientStop Color="#F29D3A" Offset="1.0"/>
             </LinearGradientBrush>
         </Border.BorderBrush>
-        <Border.BorderThickness>2.8</Border.BorderThickness>
+        <Border.BorderThickness>2.4</Border.BorderThickness>
         <StackPanel>
             <!-- File Name Display -->
-            <TextBlock x:Name="FileNameText" Text="FileName.txt" FontSize="22" FontWeight="Bold" Foreground="#FCE49C" Margin="0,0,0,17"/>
+            <TextBlock x:Name="FileNameText" Text="FileName.txt" FontSize="19" FontWeight="Bold" Foreground="#FCE49C" Margin="0,0,0,14"/>
 
-            <!-- Audio Language Selection -->
-            <TextBlock Text="Audio Language" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="18"/>
-            <ComboBox x:Name="AudioLanguageCombo" SelectedIndex="0" Margin="0,6,0,17" Height="39" MinWidth="168">
-                <ComboBox.Style>
-                    <Style TargetType="ComboBox">
-                        <Setter Property="FontSize" Value="16"/>
-                        <Setter Property="BorderBrush" Value="#efa449"/>
-                        <Setter Property="BorderThickness" Value="2"/>
-                        <Setter Property="Background" Value="#fadc93"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ComboBox">
-                                    <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="12">
-                                        <Grid>
-                                            <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false"
-                                                IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                                ClickMode="Press"
-                                                Background="Transparent"
-                                                BorderThickness="0">
-                                                <Path x:Name="Arrow" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z" Fill="#FFD600" Width="8" Height="4"/>
-                                            </ToggleButton>
-                                            <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="6,0,24,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                                            <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
-                                                <Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="200" Background="#fadc94">
-                                                    <Border x:Name="DropDownBorder" BorderBrush="#FFD600" BorderThickness="2" CornerRadius="5" Background="#fce6ac">
-                                                        <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
-                                                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
-                                                        </ScrollViewer>
-                                                    </Border>
+            <!-- Audio Language and Content Style Selection -->
+            <DockPanel LastChildFill="False" Margin="0,0,0,14">
+                <StackPanel DockPanel.Dock="Left" Width="340">
+                    <TextBlock Text="Audio Language" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="15"/>
+                    <ComboBox x:Name="AudioLanguageCombo" SelectedIndex="0" Margin="0,5,0,0" Height="33" MinWidth="143">
+                        <ComboBox.Style>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="FontSize" Value="14"/>
+                                <Setter Property="BorderBrush" Value="#efa449"/>
+                                <Setter Property="BorderThickness" Value="2"/>
+                                <Setter Property="Background" Value="#fadc93"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="10">
+                                                <Grid>
+                                                    <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false"
+                                                        IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                        ClickMode="Press"
+                                                        Background="Transparent"
+                                                        BorderThickness="0">
+                                                        <Path x:Name="Arrow" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z" Fill="#FFD600" Width="8" Height="4"/>
+                                                    </ToggleButton>
+                                                    <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="6,0,24,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                    <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                                        <Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="200" Background="#fadc94">
+                                                            <Border x:Name="DropDownBorder" BorderBrush="#FFD600" BorderThickness="2" CornerRadius="5" Background="#fce6ac">
+                                                                <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                                                </ScrollViewer>
+                                                            </Border>
+                                                        </Grid>
+                                                    </Popup>
                                                 </Grid>
-                                            </Popup>
-                                        </Grid>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ComboBox.Style>
-                <ComboBoxItem Content="English" Tag="en"/>
-                <ComboBoxItem Content="Persian" Tag="fa"/>
-                <ComboBoxItem Content="Arabic" Tag="ar"/>
-                <ComboBoxItem Content="Chinese" Tag="zh"/>
-                <ComboBoxItem Content="French" Tag="fr"/>
-                <ComboBoxItem Content="German" Tag="de"/>
-                <ComboBoxItem Content="Hindi" Tag="hi"/>
-                <ComboBoxItem Content="Italian" Tag="it"/>
-                <ComboBoxItem Content="Japanese" Tag="ja"/>
-                <ComboBoxItem Content="Korean" Tag="ko"/>
-                <ComboBoxItem Content="Russian" Tag="ru"/>
-                <ComboBoxItem Content="Spanish" Tag="es"/>
-                <ComboBoxItem Content="Turkish" Tag="tr"/>
-            </ComboBox>
-
-            <!-- Output Language Selection -->
-            <TextBlock Text="Output Language" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="18"/>
-            <ComboBox x:Name="OutputLanguageCombo" SelectedIndex="0" Margin="0,6,0,17" Height="39" MinWidth="168">
-                <ComboBox.Style>
-                    <Style TargetType="ComboBox">
-                        <Setter Property="FontSize" Value="16"/>
-                        <Setter Property="BorderBrush" Value="#efa449"/>
-                        <Setter Property="BorderThickness" Value="2"/>
-                        <Setter Property="Background" Value="#fadc93"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ComboBox">
-                                    <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="12">
-                                        <Grid>
-                                            <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false"
-                                                IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                                ClickMode="Press"
-                                                Background="Transparent"
-                                                BorderThickness="0">
-                                                <Path x:Name="Arrow" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z" Fill="#FFD600" Width="8" Height="4"/>
-                                            </ToggleButton>
-                                            <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="6,0,24,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                                            <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
-                                                <Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="200" Background="#fadc94">
-                                                    <Border x:Name="DropDownBorder" BorderBrush="#FFD600" BorderThickness="2" CornerRadius="5" Background="#fce6ac">
-                                                        <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
-                                                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
-                                                        </ScrollViewer>
-                                                    </Border>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ComboBox.Style>
+                        <ComboBoxItem Content="English" Tag="en"/>
+                        <ComboBoxItem Content="Persian" Tag="fa"/>
+                        <ComboBoxItem Content="Arabic" Tag="ar"/>
+                        <ComboBoxItem Content="Chinese" Tag="zh"/>
+                        <ComboBoxItem Content="French" Tag="fr"/>
+                        <ComboBoxItem Content="German" Tag="de"/>
+                        <ComboBoxItem Content="Hindi" Tag="hi"/>
+                        <ComboBoxItem Content="Italian" Tag="it"/>
+                        <ComboBoxItem Content="Japanese" Tag="ja"/>
+                        <ComboBoxItem Content="Korean" Tag="ko"/>
+                        <ComboBoxItem Content="Russian" Tag="ru"/>
+                        <ComboBoxItem Content="Spanish" Tag="es"/>
+                        <ComboBoxItem Content="Turkish" Tag="tr"/>
+                    </ComboBox>
+                </StackPanel>
+                
+                <StackPanel DockPanel.Dock="Right" Width="340" Margin="17,0,0,0">
+                    <TextBlock Text="Content Style" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="15"/>
+                    <ComboBox x:Name="ContentStyleCombo" SelectedIndex="0" Margin="0,5,0,0" Height="33" MinWidth="143">
+                        <ComboBox.Style>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="FontSize" Value="14"/>
+                                <Setter Property="BorderBrush" Value="#efa449"/>
+                                <Setter Property="BorderThickness" Value="2"/>
+                                <Setter Property="Background" Value="#fadc93"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="10">
+                                                <Grid>
+                                                    <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false"
+                                                        IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                        ClickMode="Press"
+                                                        Background="Transparent"
+                                                        BorderThickness="0">
+                                                        <Path x:Name="Arrow" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z" Fill="#FFD600" Width="8" Height="4"/>
+                                                    </ToggleButton>
+                                                    <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="6,0,24,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                    <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                                        <Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="200" Background="#fadc94">
+                                                            <Border x:Name="DropDownBorder" BorderBrush="#FFD600" BorderThickness="2" CornerRadius="5" Background="#fce6ac">
+                                                                <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                                                </ScrollViewer>
+                                                            </Border>
+                                                        </Grid>
+                                                    </Popup>
                                                 </Grid>
-                                            </Popup>
-                                        </Grid>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ComboBox.Style>
-                <ComboBoxItem Content="English" Tag="en"/>
-                <ComboBoxItem Content="Persian" Tag="fa"/>
-                <ComboBoxItem Content="Arabic" Tag="ar"/>
-                <ComboBoxItem Content="Chinese" Tag="zh"/>
-                <ComboBoxItem Content="French" Tag="fr"/>
-                <ComboBoxItem Content="German" Tag="de"/>
-                <ComboBoxItem Content="Hindi" Tag="hi"/>
-                <ComboBoxItem Content="Italian" Tag="it"/>
-                <ComboBoxItem Content="Japanese" Tag="ja"/>
-                <ComboBoxItem Content="Korean" Tag="ko"/>
-                <ComboBoxItem Content="Russian" Tag="ru"/>
-                <ComboBoxItem Content="Spanish" Tag="es"/>
-                <ComboBoxItem Content="Turkish" Tag="tr"/>
-            </ComboBox>
-
-            <!-- Audio Subject Text Input -->
-            <TextBlock Text="Audio Subject" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="18"/>
-            <TextBox x:Name="AudioSubjectTextBox" Height="39" Margin="0,6,0,17" FontSize="16" BorderBrush="#efa449" BorderThickness="2" Background="#fcdc93">
-                <TextBox.Style>
-                    <Style TargetType="TextBox">
-                        <Setter Property="FontSize" Value="16"/>
-                        <Setter Property="BorderBrush" Value="#efa449"/>
-                        <Setter Property="BorderThickness" Value="2"/>
-                        <Setter Property="Background" Value="#fadc93"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="TextBox">
-                                    <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="12">
-                                        <ScrollViewer x:Name="PART_ContentHost"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </TextBox.Style>
-            </TextBox>
-
-            <!-- File Type Selection -->
-            <TextBlock Text="File Type" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="18"/>
-            <ComboBox x:Name="FileTypeCombo" SelectedIndex="0" Margin="0,6,0,17" Height="39" MinWidth="168">
-                <ComboBox.Style>
-                    <Style TargetType="ComboBox">
-                        <Setter Property="FontSize" Value="16"/>
-                        <Setter Property="BorderBrush" Value="#efa449"/>
-                        <Setter Property="BorderThickness" Value="2"/>
-                        <Setter Property="Background" Value="#fadc93"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ComboBox">
-                                    <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="12">
-                                        <Grid>
-                                            <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false"
-                                                IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                                ClickMode="Press"
-                                                Background="Transparent"
-                                                BorderThickness="0">
-                                                <Path x:Name="Arrow" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z" Fill="#FFD600" Width="8" Height="4"/>
-                                            </ToggleButton>
-                                            <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="6,0,24,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                                            <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
-                                                <Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="200" Background="#fadc94">
-                                                    <Border x:Name="DropDownBorder" BorderBrush="#FFD600" BorderThickness="2" CornerRadius="5" Background="#fce6ac">
-                                                        <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
-                                                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
-                                                        </ScrollViewer>
-                                                    </Border>
-                                                </Grid>
-                                            </Popup>
-                                        </Grid>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ComboBox.Style>
-                <ComboBoxItem Content="Word"/>
-                <ComboBoxItem Content="PDF"/>
-                <ComboBoxItem Content="MD"/>
-            </ComboBox>
-
-            <!-- Save Location -->
-            <TextBlock Text="Save Location" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="18"/>
-            <DockPanel Margin="0,6,0,17" LastChildFill="False" VerticalAlignment="Center">
-                <TextBox x:Name="LocationTextBox" Width="550" Height="39" VerticalAlignment="Center" Margin="0,0,11,0" IsReadOnly="True" VerticalContentAlignment="Center">
-                    <TextBox.Style>
-                        <Style TargetType="TextBox">
-                            <Setter Property="FontSize" Value="16"/>
-                            <Setter Property="BorderBrush" Value="#efa449"/>
-                            <Setter Property="BorderThickness" Value="2"/>
-                            <Setter Property="Background" Value="#fcdc93"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="TextBox">
-                                        <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="12">
-                                            <ScrollViewer x:Name="PART_ContentHost"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </TextBox.Style>
-                </TextBox>
-                <Button x:Name="BrowseButton" Content="Save Location" Width="168" Height="39" Style="{DynamicResource ModernButton}" Cursor="Hand">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border Background="{TemplateBinding Background}" CornerRadius="7">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ComboBox.Style>
+                        <ComboBoxItem Content="None" Tag="none"/>
+                        <ComboBoxItem Content="Formal" Tag="formal"/>
+                        <ComboBoxItem Content="Informal" Tag="informal"/>
+                    </ComboBox>
+                </StackPanel>
             </DockPanel>
 
-            <!-- User Prompt Text Area -->
-            <TextBlock Text="Extera Prompt" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="18"/>
-            <TextBox x:Name="UserPromptTextBox" Height="50" Margin="0,6,0,17" AcceptsReturn="True" TextWrapping="Wrap" FontSize="16" BorderBrush="#efa449" BorderThickness="2" Background="#fcdc93">
+            <!-- Output Language and Audio Subject Selection -->
+            <DockPanel LastChildFill="False" Margin="0,0,0,14">
+                <StackPanel DockPanel.Dock="Left" Width="340">
+                    <TextBlock Text="Output Language" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="15"/>
+                    <ComboBox x:Name="OutputLanguageCombo" SelectedIndex="0" Margin="0,5,0,0" Height="33" MinWidth="143">
+                        <ComboBox.Style>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="FontSize" Value="14"/>
+                                <Setter Property="BorderBrush" Value="#efa449"/>
+                                <Setter Property="BorderThickness" Value="2"/>
+                                <Setter Property="Background" Value="#fadc93"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="10">
+                                                <Grid>
+                                                    <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false"
+                                                        IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                        ClickMode="Press"
+                                                        Background="Transparent"
+                                                        BorderThickness="0">
+                                                        <Path x:Name="Arrow" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z" Fill="#FFD600" Width="8" Height="4"/>
+                                                    </ToggleButton>
+                                                    <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="6,0,24,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                    <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                                        <Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="200" Background="#fadc94">
+                                                            <Border x:Name="DropDownBorder" BorderBrush="#FFD600" BorderThickness="2" CornerRadius="5" Background="#fce6ac">
+                                                                <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                                                </ScrollViewer>
+                                                            </Border>
+                                                        </Grid>
+                                                    </Popup>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ComboBox.Style>
+                        <ComboBoxItem Content="English" Tag="en"/>
+                        <ComboBoxItem Content="Persian" Tag="fa"/>
+                        <ComboBoxItem Content="Arabic" Tag="ar"/>
+                        <ComboBoxItem Content="Chinese" Tag="zh"/>
+                        <ComboBoxItem Content="French" Tag="fr"/>
+                        <ComboBoxItem Content="German" Tag="de"/>
+                        <ComboBoxItem Content="Hindi" Tag="hi"/>
+                        <ComboBoxItem Content="Italian" Tag="it"/>
+                        <ComboBoxItem Content="Japanese" Tag="ja"/>
+                        <ComboBoxItem Content="Korean" Tag="ko"/>
+                        <ComboBoxItem Content="Russian" Tag="ru"/>
+                        <ComboBoxItem Content="Spanish" Tag="es"/>
+                        <ComboBoxItem Content="Turkish" Tag="tr"/>
+                    </ComboBox>
+                </StackPanel>
+                
+                <StackPanel DockPanel.Dock="Right" Width="340" Margin="17,0,0,0">
+                    <TextBlock Text="Audio Subject" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="15"/>
+                    <TextBox x:Name="AudioSubjectTextBox" Height="33" Margin="0,5,0,0" FontSize="14" BorderBrush="#efa449" BorderThickness="2" Background="#fcdc93">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox">
+                                <Setter Property="FontSize" Value="14"/>
+                                <Setter Property="BorderBrush" Value="#efa449"/>
+                                <Setter Property="BorderThickness" Value="2"/>
+                                <Setter Property="Background" Value="#fadc93"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="TextBox">
+                                            <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="10">
+                                                <ScrollViewer x:Name="PART_ContentHost"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+                </StackPanel>
+            </DockPanel>
+
+             <!-- Content Details and Audio Detection Model Selection -->
+           <DockPanel LastChildFill="False" Margin="0,0,0,14">
+                <StackPanel DockPanel.Dock="Left" Width="340">
+                    <TextBlock Text="Content Details" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="15"/>
+                    <ComboBox x:Name="ContentDetailsCombo" SelectedIndex="0" Margin="0,5,0,0" Height="33" MinWidth="143">
+            <ComboBox.Style>
+                <Style TargetType="ComboBox">
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="BorderBrush" Value="#efa449"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                    <Setter Property="Background" Value="#fadc93"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ComboBox">
+                                <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="10">
+                                    <Grid>
+                                        <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false"
+                                            IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                            ClickMode="Press"
+                                            Background="Transparent"
+                                            BorderThickness="0">
+                                            <Path x:Name="Arrow" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z" Fill="#FFD600" Width="8" Height="4"/>
+                                        </ToggleButton>
+                                        <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="6,0,24,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                        <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                            <Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="200" Background="#fadc94">
+                                                <Border x:Name="DropDownBorder" BorderBrush="#FFD600" BorderThickness="2" CornerRadius="5" Background="#fce6ac">
+                                                    <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                                    </ScrollViewer>
+                                                </Border>
+                                            </Grid>
+                                        </Popup>
+                                    </Grid>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ComboBox.Style>
+            <ComboBoxItem Content="Regular"/>
+            <ComboBoxItem Content="Summary"/>
+            <ComboBoxItem Content="Maximum details"/>
+        </ComboBox>
+                </StackPanel>
+                
+                <StackPanel DockPanel.Dock="Right" Width="340" Margin="17,0,0,0">
+                    <TextBlock Text="Audio Detection Model" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="15"/>
+                    <ComboBox x:Name="AudioDetectionModelCombo" SelectedIndex="0" Margin="0,5,0,0" Height="33" MinWidth="143">
+            <ComboBox.Style>
+                <Style TargetType="ComboBox">
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="BorderBrush" Value="#efa449"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                    <Setter Property="Background" Value="#fadc93"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ComboBox">
+                                <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="10">
+                                    <Grid>
+                                        <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false"
+                                            IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                            ClickMode="Press"
+                                            Background="Transparent"
+                                            BorderThickness="0">
+                                            <Path x:Name="Arrow" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z" Fill="#FFD600" Width="8" Height="4"/>
+                                        </ToggleButton>
+                                        <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="6,0,24,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                        <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                            <Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="200" Background="#fadc94">
+                                                <Border x:Name="DropDownBorder" BorderBrush="#FFD600" BorderThickness="2" CornerRadius="5" Background="#fce6ac">
+                                                    <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                                    </ScrollViewer>
+                                                </Border>
+                                            </Grid>
+                                        </Popup>
+                                    </Grid>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ComboBox.Style>
+        </ComboBox>
+                </StackPanel>
+                         </DockPanel>
+             
+            
+             
+             <!-- File Type, Font Family and Font Size Selection -->
+            <DockPanel LastChildFill="False" Margin="0,0,0,14">
+                <StackPanel DockPanel.Dock="Left" Width="257">
+                    <TextBlock Text="File Type" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="15"/>
+                    <ComboBox x:Name="FileTypeCombo" SelectedIndex="0" Margin="0,5,0,0" Height="33" MinWidth="143">
+                        <ComboBox.Style>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="FontSize" Value="14"/>
+                                <Setter Property="BorderBrush" Value="#efa449"/>
+                                <Setter Property="BorderThickness" Value="2"/>
+                                <Setter Property="Background" Value="#fadc93"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="10">
+                                                <Grid>
+                                                    <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false"
+                                                        IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                        ClickMode="Press"
+                                                        Background="Transparent"
+                                                        BorderThickness="0">
+                                                        <Path x:Name="Arrow" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z" Fill="#FFD600" Width="8" Height="4"/>
+                                                    </ToggleButton>
+                                                    <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="6,0,24,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                    <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                                        <Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="200" Background="#fadc94">
+                                                            <Border x:Name="DropDownBorder" BorderBrush="#FFD600" BorderThickness="2" CornerRadius="5" Background="#fce6ac">
+                                                                <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                                                </ScrollViewer>
+                                                            </Border>
+                                                        </Grid>
+                                                    </Popup>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ComboBox.Style>
+                        <ComboBoxItem Content="Word"/>
+                        <ComboBoxItem Content="PDF"/>
+                        <ComboBoxItem Content="MD"/>
+                    </ComboBox>
+                </StackPanel>
+                
+                <StackPanel Width="225" Margin="17,0,0,0">
+                    <TextBlock Text="Font Family" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="15"/>
+                    <ComboBox x:Name="FontFamilyCombo" SelectedIndex="0" Margin="0,5,0,0" Height="33" MinWidth="143">
+                        <ComboBox.Style>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="FontSize" Value="14"/>
+                                <Setter Property="BorderBrush" Value="#efa449"/>
+                                <Setter Property="BorderThickness" Value="2"/>
+                                <Setter Property="Background" Value="#fadc93"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="10">
+                                                <Grid>
+                                                    <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false"
+                                                        IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                        ClickMode="Press"
+                                                        Background="Transparent"
+                                                        BorderThickness="0">
+                                                        <Path x:Name="Arrow" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z" Fill="#FFD600" Width="8" Height="4"/>
+                                                    </ToggleButton>
+                                                    <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="6,0,24,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                    <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                                        <Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="200" Background="#fadc94">
+                                                            <Border x:Name="DropDownBorder" BorderBrush="#FFD600" BorderThickness="2" CornerRadius="5" Background="#fce6ac">
+                                                                <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                                                </ScrollViewer>
+                                                            </Border>
+                                                        </Grid>
+                                                    </Popup>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ComboBox.Style>
+                        <ComboBoxItem Content="Arial"/>
+                        <ComboBoxItem Content="Times New Roman"/>
+                        <ComboBoxItem Content="Calibri"/>
+                        <ComboBoxItem Content="Verdana"/>
+                    </ComboBox>
+                </StackPanel>
+                
+                <StackPanel Width="225" Margin="17,0,0,0">
+                    <TextBlock Text="Font Size" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="15"/>
+                    <ComboBox x:Name="FontSizeCombo" SelectedIndex="2" Margin="0,5,0,0" Height="33" MinWidth="143">
+                        <ComboBox.Style>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="FontSize" Value="14"/>
+                                <Setter Property="BorderBrush" Value="#efa449"/>
+                                <Setter Property="BorderThickness" Value="2"/>
+                                <Setter Property="Background" Value="#fadc93"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="10">
+                                                <Grid>
+                                                    <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false"
+                                                        IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                        ClickMode="Press"
+                                                        Background="Transparent"
+                                                        BorderThickness="0">
+                                                        <Path x:Name="Arrow" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z" Fill="#FFD600" Width="8" Height="4"/>
+                                                    </ToggleButton>
+                                                    <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="6,0,24,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                    <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                                        <Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="200" Background="#fadc94">
+                                                            <Border x:Name="DropDownBorder" BorderBrush="#FFD600" BorderThickness="2" CornerRadius="5" Background="#fce6ac">
+                                                                <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                                                </ScrollViewer>
+                                                            </Border>
+                                                        </Grid>
+                                                    </Popup>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ComboBox.Style>
+                        <ComboBoxItem Content="10"/>
+                        <ComboBoxItem Content="11"/>
+                        <ComboBoxItem Content="12"/>
+                        <ComboBoxItem Content="14"/>
+                        <ComboBoxItem Content="16"/>
+                        <ComboBoxItem Content="18"/>
+                        <ComboBoxItem Content="20"/>
+                        <ComboBoxItem Content="24"/>
+                        <ComboBoxItem Content="28"/>
+                        <ComboBoxItem Content="32"/>
+                        <ComboBoxItem Content="36"/>
+                    </ComboBox>
+                </StackPanel>
+            </DockPanel>
+
+
+          
+
+           <!-- Save Location Selection -->
+           <StackPanel Margin="0,0,0,14">
+        <TextBlock Text="Save Location" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="15"/>
+        <DockPanel Margin="0,5,0,15" LastChildFill="False" VerticalAlignment="Center">
+            <TextBox x:Name="LocationTextBox" Width="570" Height="33" VerticalAlignment="Center" Margin="0,0,10,0" IsReadOnly="True" VerticalContentAlignment="Center">
                 <TextBox.Style>
                     <Style TargetType="TextBox">
-                        <Setter Property="FontSize" Value="16"/>
+                        <Setter Property="FontSize" Value="14"/>
                         <Setter Property="BorderBrush" Value="#efa449"/>
                         <Setter Property="BorderThickness" Value="2"/>
                         <Setter Property="Background" Value="#fcdc93"/>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="TextBox">
-                                    <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="12">
+                                    <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="10">
                                         <ScrollViewer x:Name="PART_ContentHost"/>
                                     </Border>
                                 </ControlTemplate>
@@ -243,33 +459,118 @@
                     </Style>
                 </TextBox.Style>
             </TextBox>
+            <Button x:Name="BrowseButton" Content="Save Location" Width="143" Height="33" Style="{DynamicResource ModernButton}" Cursor="Hand" FontSize="14">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="7">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </DockPanel>
+    </StackPanel>
+              <!-- Audio Detection Model Selection -->
+
+            <!-- User Prompt Text Area -->
+            <TextBlock Text="Extera Prompt" Foreground="#fce6ac" FontWeight="SemiBold" FontSize="15"/>
+            <TextBox x:Name="UserPromptTextBox" Height="43" Margin="0,5,0,14" AcceptsReturn="True" TextWrapping="Wrap" FontSize="14" BorderBrush="#efa449" BorderThickness="2" Background="#fcdc93">
+                <TextBox.Style>
+                    <Style TargetType="TextBox">
+                        <Setter Property="FontSize" Value="14"/>
+                        <Setter Property="BorderBrush" Value="#efa449"/>
+                        <Setter Property="BorderThickness" Value="2"/>
+                        <Setter Property="Background" Value="#fcdc93"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TextBox">
+                                    <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="10">
+                                        <ScrollViewer x:Name="PART_ContentHost"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+             <!-- Auto Filter Checkbox -->
+             <StackPanel Margin="0,0,0,14">
+                 <CheckBox x:Name="AutoFilterCheckBox" Content="Auto Filter Out Of Subject Contents" 
+                          Foreground="#fce6ac" FontWeight="SemiBold" FontSize="15" 
+                          Margin="0,5,0,0" VerticalAlignment="Center">
+                     <CheckBox.Style>
+                         <Style TargetType="CheckBox">
+                             <Setter Property="Foreground" Value="#fce6ac"/>
+                             <Setter Property="FontWeight" Value="SemiBold"/>
+                             <Setter Property="FontSize" Value="15"/>
+                             <Setter Property="Template">
+                                 <Setter.Value>
+                                     <ControlTemplate TargetType="CheckBox">
+                                         <Grid>
+                                             <Grid.ColumnDefinitions>
+                                                 <ColumnDefinition Width="Auto"/>
+                                                 <ColumnDefinition Width="*"/>
+                                             </Grid.ColumnDefinitions>
+                                             
+                                             <!-- Custom CheckBox -->
+                                             <Border x:Name="CheckBoxBorder" Grid.Column="0" Width="18" Height="18" 
+                                                     BorderBrush="#efa449" BorderThickness="2" 
+                                                     Background="#fadc93" CornerRadius="3" 
+                                                     Margin="0,0,8,0">
+                                                 <Path x:Name="CheckMark" Data="M 2,6 L 6,10 L 14,2" 
+                                                       Stroke="#000000" StrokeThickness="2" 
+                                                       Visibility="Collapsed"/>
+                                             </Border>
+                                             
+                                             <!-- Content -->
+                                             <ContentPresenter Grid.Column="1" Content="{TemplateBinding Content}" 
+                                                             VerticalAlignment="Center"/>
+                                         </Grid>
+                                         
+                                         <ControlTemplate.Triggers>
+                                             <Trigger Property="IsChecked" Value="True">
+                                                 <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
+                                                 <Setter TargetName="CheckBoxBorder" Property="Background" Value="#FFD600"/>
+                                             </Trigger>
+                                             <Trigger Property="IsMouseOver" Value="True">
+                                                 <Setter TargetName="CheckBoxBorder" Property="BorderBrush" Value="#FFD600"/>
+                                             </Trigger>
+                                         </ControlTemplate.Triggers>
+                                     </ControlTemplate>
+                                 </Setter.Value>
+                             </Setter>
+                         </Style>
+                     </CheckBox.Style>
+                 </CheckBox>
+             </StackPanel>
 
             <!-- Whisper Progress Bar with Percentage -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,8">
-                <ProgressBar x:Name="WhisperProgressBar" Height="8" Width="168"
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,7">
+                <ProgressBar x:Name="WhisperProgressBar" Height="7" Width="143"
                              Foreground="#F29D3A" Background="#FFF3E0" Visibility="Collapsed"
                              Minimum="0" Maximum="100" Value="60"
                              Style="{DynamicResource ModernProgressBar}"/>
-                <TextBlock x:Name="WhisperProgressText" Text="0%" FontSize="16" FontWeight="Bold"
-                           Foreground="#F29D3A" Margin="12,0,0,0" VerticalAlignment="Center"
+                <TextBlock x:Name="WhisperProgressText" Text="0%" FontSize="14" FontWeight="Bold"
+                           Foreground="#F29D3A" Margin="10,0,0,0" VerticalAlignment="Center"
                            Visibility="Collapsed"/>
-                <TextBlock x:Name="GeminiProgressText" Text="" FontSize="16" FontWeight="Bold"
-                           Foreground="#F29D3A" Margin="12,0,0,0" VerticalAlignment="Center"
+                <TextBlock x:Name="GeminiProgressText" Text="" FontSize="14" FontWeight="Bold"
+                           Foreground="#F29D3A" Margin="10,0,0,0" VerticalAlignment="Center"
                            Visibility="Collapsed"/>
             </StackPanel>
+
             <!-- Start Button Centered -->
-            <StackPanel x:Name="ActionPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,17,0,0">
-                <Button x:Name="StartButton" Content="Start" Height="50" Width="168" Style="{DynamicResource ModernButton}" Cursor="Hand" FontSize="22"/>
+            <StackPanel x:Name="ActionPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,14,0,0">
+                <Button x:Name="StartButton" Content="Start" Height="43" Width="143" Style="{DynamicResource ModernButton}" Cursor="Hand" FontSize="19"/>
             </StackPanel>
 
             <!-- Modern Loading & Cancel Centered -->
-            <StackPanel x:Name="LoadingPanel" Orientation="Horizontal" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,34,0,0" Height="67">
-                <Viewbox Width="67" Height="67" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,22,0">
-                    <Grid Width="56" Height="56">
-                        <Ellipse Width="56" Height="56" StrokeThickness="7" Stroke="#FFD600" Opacity="0.15"/>
-                        <Ellipse Width="56" Height="56" StrokeThickness="7" StrokeDashArray="0,2 10,2" Stroke="#F29D3A">
+            <StackPanel x:Name="LoadingPanel" Orientation="Horizontal" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,29,0,0" Height="57">
+                <Viewbox Width="57" Height="57" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,19,0">
+                    <Grid Width="48" Height="48">
+                        <Ellipse Width="48" Height="48" StrokeThickness="6" Stroke="#FFD600" Opacity="0.15"/>
+                        <Ellipse Width="48" Height="48" StrokeThickness="6" StrokeDashArray="0,2 8,2" Stroke="#F29D3A">
                             <Ellipse.RenderTransform>
-                                <RotateTransform x:Name="SpinnerRotate" Angle="0" CenterX="28" CenterY="28"/>
+                                <RotateTransform x:Name="SpinnerRotate" Angle="0" CenterX="24" CenterY="24"/>
                             </Ellipse.RenderTransform>
                             <Ellipse.Triggers>
                                 <EventTrigger RoutedEvent="FrameworkElement.Loaded">
@@ -283,10 +584,14 @@
                         </Ellipse>
                     </Grid>
                 </Viewbox>
-                <Button x:Name="CancelButton" Content="Cancel" Height="56" Width="140" Style="{DynamicResource ModernButton}"
-                        HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" Cursor="Hand" FontSize="22"/>
-                <TextBlock x:Name="CancelingText" Text="Canceling..." Foreground="#FFD600" FontSize="22" VerticalAlignment="Center" Margin="18,0,0,0" Visibility="Collapsed"/>
+                <Button x:Name="CancelButton" Content="Cancel" Height="48" Width="119" Style="{DynamicResource ModernButton}"
+                        HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" Cursor="Hand" FontSize="19"/>
+                <TextBlock x:Name="CancelingText" Text="Canceling..." Foreground="#FFD600" FontSize="19" VerticalAlignment="Center" Margin="15,0,0,0" Visibility="Collapsed"/>
             </StackPanel>
         </StackPanel>
     </Border>
 </UserControl>
+
+
+
+
