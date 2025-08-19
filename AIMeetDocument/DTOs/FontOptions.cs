@@ -43,23 +43,35 @@ public class FontOptions
     public string GetFontStyleCss(FontStyle style) => style == FontStyle.Italic ? "italic" : "normal";
 
     /// <summary>
-    /// Creates a FontOptions instance with PDF-specific defaults
+    /// Creates a FontOptions instance with defaults based on the provided font family and base font size.
+    /// Other sizes are derived from the base size.
     /// </summary>
-    /// <returns>A FontOptions instance configured for PDF</returns>
-    public static FontOptions CreateDefaults()
+    /// <param name="family">The default/header font family.</param>
+    /// <param name="baseSizePt">The base font size in points for normal text.</param>
+    /// <returns>A FontOptions instance configured accordingly.</returns>
+    public static FontOptions CreateDefaults(FontFamily family, int baseSizePt)
     {
         return new FontOptions
         {
-            DefaultFontFamily = FontFamily.Gadugi,
-            HeaderFontFamily = FontFamily.Gadugi,
-            DefaultFontSizePt = 12,
-            Header1FontSizePt = 16,
-            Header2FontSizePt = 14,
-            Header3FontSizePt = 13,
-            Header4FontSizePt = 12,
+            DefaultFontFamily = family,
+            HeaderFontFamily = family,
+            DefaultFontSizePt = baseSizePt,
+            Header1FontSizePt = baseSizePt + 4,
+            Header2FontSizePt = baseSizePt + 2,
+            Header3FontSizePt = baseSizePt + 1,
+            Header4FontSizePt = baseSizePt,
             HeaderBold = true,
             DefaultFontStyle = FontStyle.Normal,
             HeaderFontStyle = FontStyle.Normal
         };
+    }
+
+    /// <summary>
+    /// Creates a FontOptions instance with default values.
+    /// </summary>
+    /// <returns>A FontOptions instance configured for default usage.</returns>
+    public static FontOptions CreateDefaults()
+    {
+        return CreateDefaults(FontFamily.Gadugi, 12);
     }
 }

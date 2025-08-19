@@ -373,10 +373,6 @@
                                 </Setter>
                             </Style>
                         </ComboBox.Style>
-                        <ComboBoxItem Content="Arial"/>
-                        <ComboBoxItem Content="Times New Roman"/>
-                        <ComboBoxItem Content="Calibri"/>
-                        <ComboBoxItem Content="Verdana"/>
                     </ComboBox>
                 </StackPanel>
                 

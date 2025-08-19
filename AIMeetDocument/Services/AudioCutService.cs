@@ -43,8 +43,7 @@ public class AudioCutService
 public List<string> CutAudioBySeconds(string audioFilePath, List<int> seconds, CancellationToken cancellationToken = default)
 {
     var outputPaths = new List<string>();
-    var projectDir = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location)!.Parent!.Parent!.FullName;
-    var cacheDir = Path.Combine(projectDir, "AudioChunksCache");
+    var cacheDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AudioCache");
     Directory.CreateDirectory(cacheDir);
 
     string wav16kPath = EnsureWav16KHz(audioFilePath);
@@ -110,10 +109,9 @@ public List<string> CutAudioBySeconds(string audioFilePath, List<int> seconds, C
     /// <summary>
     /// Deletes all files inside the AudioChunksCache folder.
     /// </summary>
-    public void CleanAudioChunksCache()
+    public void CleanAudioCache()
     {
-        var projectDir = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location)!.Parent!.Parent!.FullName;
-        var cacheDir = Path.Combine(projectDir, "AudioChunksCache");
+        var cacheDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AudioCache");
         if (Directory.Exists(cacheDir))
         {
             foreach (var file in Directory.GetFiles(cacheDir))
