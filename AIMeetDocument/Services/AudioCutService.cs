@@ -105,19 +105,4 @@ public List<string> CutAudioBySeconds(string audioFilePath, List<int> seconds, C
     }
     return outputPaths;
 }
-
-    /// <summary>
-    /// Deletes all files inside the AudioChunksCache folder.
-    /// </summary>
-    public void CleanAudioCache()
-    {
-        var cacheDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AudioCache");
-        if (Directory.Exists(cacheDir))
-        {
-            foreach (var file in Directory.GetFiles(cacheDir))
-            {
-                File.Delete(file);
-            }
-        }
-    }
 }
