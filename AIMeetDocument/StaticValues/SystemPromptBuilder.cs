@@ -30,7 +30,7 @@ public class SystemPromptBuilder
                                     {{contentStyle switch
                                     {
                                         ContentStyle.Formal => "* **Content Style:** The pamphlet should have a formal tone, using professional language and structure.",
-                                        ContentStyle.Informal => "* **Content Style:** The pamphlet should have an informal, handwritten note style that is easy to read and understand.",
+                                        ContentStyle.Informal => "* **Content Style:** The pamphlet should have an informal, easy to read and understand note style .",
                                         _ => ""
                                     }}}
                                     Here is the conversation:
