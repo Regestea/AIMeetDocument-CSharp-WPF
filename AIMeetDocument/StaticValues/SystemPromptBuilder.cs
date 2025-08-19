@@ -10,11 +10,9 @@ public class SystemPromptBuilder
         DefaultSystemPrompt = $$"""
                                 {{(string.IsNullOrWhiteSpace(userPrompt) ? "" : $"userPrompt: {userPrompt}\n")}}
                                 System:
-
                                     Your task is to transform a conversation transcript into an informative pamphlet. Follow these rules precisely:
-                                    
                                     * **Final Output:** The entire response must be the pamphlet itself, formatted in Markdown. Do not include any introductory phrases like "Here is the pamphlet."
-                                    * **Subject Focus:** The pamphlet must be exclusively about the subject: `{{subject}}`. Ignore all parts of the conversation that are off-topic.
+                                    * **Subject Focus:** The pamphlet must be exclusively about the subject: `{{subject}}`. {{(autoFilter ? $"Ignore all parts of the conversation that are off-topic .": "")}}
                                     * **Content Extraction:** Extract the most important points, arguments, and details from the conversation. The goal is a detailed and structured document, not a brief summary.
                                     * **Pamphlet Structure:** The pamphlet should be well-structured with a main title, headings for different sections, and the use of bullet points or lists to organize information.
                                     * **Content Enrichment:** If the topic requires it for clarity, you may add relevant examples or brief explanations to enhance the pamphlet's content.
@@ -35,9 +33,7 @@ public class SystemPromptBuilder
                                         ContentStyle.Informal => "* **Content Style:** The pamphlet should have an informal, handwritten note style that is easy to read and understand.",
                                         _ => ""
                                     }}}
-                                 
-
-                                Here is the conversation:
+                                    Here is the conversation:
                                 """;
     }
 
