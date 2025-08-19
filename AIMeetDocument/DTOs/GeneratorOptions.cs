@@ -8,14 +8,14 @@ public class GeneratorOptions
     // Core selections
     public string AudioLanguage { get; set; } = "en";
     public string OutputLanguage { get; set; } = "en";
-    public string FileType { get; set; } = "MD"; // MD, Word, PDF
+    public FileType FileType { get; set; } = FileType.MD; // MD, Word, PDF
     public string UserPrompt { get; set; } = string.Empty;
     public string Location { get; set; } = string.Empty;
     public string AudioSubject { get; set; } = string.Empty;
 
     // UI adjuncts
-    public string ContentStyle { get; set; } = "none"; // none, formal, informal
-    public string ContentDetails { get; set; } = "Regular"; // Regular, Summary, Maximum details
+    public ContentStyle ContentStyle { get; set; } = ContentStyle.None;
+    public ContentDetails ContentDetails { get; set; } = ContentDetails.Regular;
     public bool AutoFilter { get; set; } = false;
 
     // Fonts

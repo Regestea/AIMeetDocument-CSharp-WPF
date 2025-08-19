@@ -1,26 +1,44 @@
-﻿namespace AIMeetDocument.StaticValues;
+﻿using AIMeetDocument.Enums;
+
+namespace AIMeetDocument.StaticValues;
 
 public class SystemPromptBuilder
 {
-    public SystemPromptBuilder(string subject, string language, string? userPrompt)
+    public SystemPromptBuilder(string subject, string language, string? userPrompt, bool autoFilter,
+        ContentDetails contentDetails, ContentStyle contentStyle)
     {
-        DefaultSystemPrompt = $"""
-                               {(string.IsNullOrWhiteSpace(userPrompt) ? "" : $"userPrompt: {userPrompt}\n")}
-                               System:
-                               
-                                   Your task is to transform a conversation transcript into an informative pamphlet. Follow these rules precisely:
-                                   
-                                   * **Final Output:** The entire response must be the pamphlet itself, formatted in Markdown. Do not include any introductory phrases like "Here is the pamphlet."
-                                   * **Subject Focus:** The pamphlet must be exclusively about the subject: `{subject}`. Ignore all parts of the conversation that are off-topic.
-                                   * **Content Extraction:** Extract the most important points, arguments, and details from the conversation. The goal is a detailed and structured document, not a brief summary.
-                                   * **Pamphlet Structure:** The pamphlet should be well-structured with a main title, headings for different sections, and the use of bullet points or lists to organize information.
-                                   * **Content Enrichment:** If the topic requires it for clarity, you may add relevant examples or brief explanations to enhance the pamphlet's content.
-                                   * **Language:** The pamphlet must be written in `{language}`.
-                                   * **Terminology:** If the original conversation language is different from `{language}`, do not translate specific terminology, jargon, or technical terms. Keep them in the original language.
-                                   * **Relevance Check:** If the conversation contains no relevant information about `{subject}`, do not generate a pamphlet. Instead, respond with the single sentence: "The conversation provided does not contain relevant information on the specified subject."
+        DefaultSystemPrompt = $$"""
+                                {{(string.IsNullOrWhiteSpace(userPrompt) ? "" : $"userPrompt: {userPrompt}\n")}}
+                                System:
 
-                               Here is the conversation:
-                               """;
+                                    Your task is to transform a conversation transcript into an informative pamphlet. Follow these rules precisely:
+                                    
+                                    * **Final Output:** The entire response must be the pamphlet itself, formatted in Markdown. Do not include any introductory phrases like "Here is the pamphlet."
+                                    * **Subject Focus:** The pamphlet must be exclusively about the subject: `{{subject}}`. Ignore all parts of the conversation that are off-topic.
+                                    * **Content Extraction:** Extract the most important points, arguments, and details from the conversation. The goal is a detailed and structured document, not a brief summary.
+                                    * **Pamphlet Structure:** The pamphlet should be well-structured with a main title, headings for different sections, and the use of bullet points or lists to organize information.
+                                    * **Content Enrichment:** If the topic requires it for clarity, you may add relevant examples or brief explanations to enhance the pamphlet's content.
+                                    * **Language:** The pamphlet must be written in `{{language}}`.
+                                    * **Terminology:** If the original conversation language is different from `{{language}}`, do not translate specific terminology, jargon, or technical terms. Keep them in the original language.
+                                    {{(autoFilter ? $"* **Relevance Check:** If the conversation contains no relevant information about {subject}, do not generate a pamphlet. Instead, respond with .": "")}}
+            
+                                    {{contentDetails switch
+                                    {
+                                        ContentDetails.Summary => "* **Content Details:** The pamphlet should be concise, summarizing the key points discussed in the conversation.",
+                                        ContentDetails.MaximumDetails => "* **Content Details:** The pamphlet should be detailed and informative, including all relevant points discussed in the conversation.",
+                                        _ => ""
+                                    }}}
+                                    
+                                    {{contentStyle switch
+                                    {
+                                        ContentStyle.Formal => "* **Content Style:** The pamphlet should have a formal tone, using professional language and structure.",
+                                        ContentStyle.Informal => "* **Content Style:** The pamphlet should have an informal, handwritten note style that is easy to read and understand.",
+                                        _ => ""
+                                    }}}
+                                 
+
+                                Here is the conversation:
+                                """;
     }
 
     public readonly string DefaultSystemPrompt;

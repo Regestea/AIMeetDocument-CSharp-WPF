@@ -84,20 +84,20 @@ namespace AIMeetDocument
                         var fileName = Guid.NewGuid();
                         switch (options.FileType)
                         {
-                            case "MD":
+                            case FileType.MD:
                                 var markdownService = new MarkdownToMdFileService();
                                 string outputFilePath = Path.Combine(options.Location, $"{fileName}.md");
                                 markdownService.SaveMarkdownToFile(resultContent, outputFilePath);
                                 MessageBox.Show($"Markdown file saved to {outputFilePath}");
                                 break;
-                            case "Word":
+                            case FileType.Word:
                                 var wordService = new MarkdownToWordService();
                                 string wordOutputPath = Path.Combine(options.Location, $"{fileName}.docx");
                                 wordService.ConvertMarkdownStringToDocx(resultContent, wordOutputPath,
                                     options.TextDirection, options.FontOptions);
                                 MessageBox.Show($"Word document saved to {wordOutputPath}");
                                 break;
-                            case "PDF":
+                            case FileType.PDF:
                                 var pdfService = new MarkdownToPdfService();
                                 string pdfOutputPath = Path.Combine(options.Location, $"{fileName}.pdf");
                                 pdfService.ConvertMarkdownStringToPdf(resultContent, pdfOutputPath, options.TextDirection, options.FontOptions);
@@ -231,7 +231,7 @@ namespace AIMeetDocument
                 }
 
                 var arrangedList= textPartList.ArrangeSentences(7000, 8000);
-                var systemPrompt = new SystemPromptBuilder(options.AudioSubject, options.OutputLanguage, options.UserPrompt);
+                var systemPrompt = new SystemPromptBuilder(options.AudioSubject, options.OutputLanguage, options.UserPrompt, options.AutoFilter, options.ContentDetails,options.ContentStyle);
                 var settingsService = new SettingsService();
                 var settings = settingsService.GetSettings();
                 var fullText = new StringBuilder();
@@ -311,15 +311,32 @@ namespace AIMeetDocument
             }
 
             // Read additional UI fields
-            var contentStyle = ((ComboBoxItem)ContentStyleCombo.SelectedItem).Tag?.ToString() ?? "none";
-            var contentDetails = ((ComboBoxItem)ContentDetailsCombo.SelectedItem).Content?.ToString() ?? "Regular";
+            var contentStyleTag = ((ComboBoxItem)ContentStyleCombo.SelectedItem).Tag?.ToString() ?? "none";
+            var contentDetailsText = ((ComboBoxItem)ContentDetailsCombo.SelectedItem).Content?.ToString() ?? "Regular";
+            var contentStyle = contentStyleTag switch
+            {
+                "formal" => ContentStyle.Formal,
+                "informal" => ContentStyle.Informal,
+                _ => ContentStyle.None
+            };
+            var contentDetails = contentDetailsText switch
+            {
+                "Summary" => ContentDetails.Summary,
+                "Maximum details" => ContentDetails.MaximumDetails,
+                _ => ContentDetails.Regular
+            };
             var autoFilter = AutoFilterCheckBox.IsChecked == true;
 
             var options = new GeneratorOptions
             {
                 AudioLanguage = audioLanguage,
                 OutputLanguage = outputLanguage,
-                FileType = fileType,
+                FileType = fileType switch
+                {
+                    "Word" => FileType.Word,
+                    "PDF" => FileType.PDF,
+                    _ => FileType.MD
+                },
                 UserPrompt = userPrompt,
                 Location = location,
                 AudioSubject = audioSubject,
