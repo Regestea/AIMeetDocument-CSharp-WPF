@@ -20,56 +20,19 @@ public partial class MainWindow : Window
         this.DataContext = this;
     }
 
-    private async void ScanNow_Click(object sender, RoutedEventArgs e)
+    private void ScanNow_Click(object sender, RoutedEventArgs e)
     {
-        await Task.Delay(300); // Short delay for UI feedback
-        MediaDevices.Clear();
-        foreach (var device in MediaDevice.GetDevices())
+        var dlg = new OpenFileDialog
         {
-            try
-            {
-                device.Connect();
-                string rootPath = null;
-                try
-                {
-                    var roots = device.GetDirectories("\\");
-                    if (roots != null && roots.Length > 0)
-                        rootPath = roots[0];
-                }
-                catch
-                {
-                }
-
-                var deviceViewModel = new MediaDeviceViewModel
-                {
-                    FriendlyName = device.FriendlyName,
-                    Description = device.Description,
-                    Manufacturer = device.Manufacturer,
-                    Model = device.Model,
-                    SerialNumber = device.SerialNumber,
-                    RootPath = rootPath
-                };
-                MediaDevices.Add(deviceViewModel);
-                device.Disconnect();
-            }
-            catch
-            {
-                /* Optionally handle device connection errors */
-            }
-        }
-
-        // Show MediaDeviceCard(s) if any device is found
-        if (MediaDevices.Count > 0)
+            Multiselect = true, // Enable multiple file selection
+            Title = "Select PDF Files",
+            Filter = "PDF Files (*.pdf)|*.pdf"
+        };
+        
+        if (dlg.ShowDialog() == true)
         {
-            DevicesList.Visibility = Visibility.Visible;
-            ScanCard.Visibility = Visibility.Collapsed;
-            SelectFileCard.Visibility = Visibility.Collapsed;
-        }
-        else
-        {
-            DevicesList.Visibility = Visibility.Collapsed;
-            ScanCard.Visibility = Visibility.Visible;
-            SelectFileCard.Visibility = Visibility.Visible;
+            var selectedFilePaths = dlg.FileNames.ToList();
+            NavigateToDocumentAiProcess(selectedFilePaths);
         }
     }
 
@@ -114,7 +77,7 @@ public partial class MainWindow : Window
             SettingsPanelUC.Visibility = Visibility.Visible;
     }
 
-    private void Home()
+    public void Home()
     {
         ClearComponents();
         if (ScanCard != null)
@@ -129,14 +92,14 @@ public partial class MainWindow : Window
         if (AiProccessUC != null)
             AiProccessUC.Visibility = Visibility.Collapsed;
         
+        if (DocumentAiProcessUC != null)
+            DocumentAiProcessUC.Visibility = Visibility.Collapsed;
+        
         if (SettingsPanelUC != null)
             SettingsPanelUC.Visibility = Visibility.Collapsed;
         
         if (DevicesList != null)
             DevicesList.Visibility = Visibility.Collapsed;
-        
-        if (FileExplorerUC != null)
-            FileExplorerUC.Visibility = Visibility.Collapsed;
         
         if (ScanCard != null)
             ScanCard.Visibility = Visibility.Collapsed;
@@ -147,10 +110,7 @@ public partial class MainWindow : Window
 
     public void NavigateToFileExplorer(string path)
     {
-        // Hide main cards and show FileExplorer
         ClearComponents();
-        FileExplorerUC.Visibility = Visibility.Visible;
-        FileExplorerUC.Path = path;
     }
 
     public void NavigateToAiProccess(List<string> fileNameList)
@@ -160,6 +120,16 @@ public partial class MainWindow : Window
         {
             AiProccessUC.Visibility = Visibility.Visible;
             AiProccessUC.SetFileName(fileNameList);
+        }
+    }
+
+    public void NavigateToDocumentAiProcess(List<string> pdfFilePaths)
+    {
+        ClearComponents();
+        if (DocumentAiProcessUC != null)
+        {
+            DocumentAiProcessUC.Visibility = Visibility.Visible;
+            DocumentAiProcessUC.SetPdfFilePaths(pdfFilePaths);
         }
     }
 }

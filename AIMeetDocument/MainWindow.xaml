@@ -166,11 +166,6 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <local:MediaDeviceCard DataContext="{Binding}"/>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 <!-- End Device Cards List -->
                 <StackPanel x:Name="LoadingPanel" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
@@ -179,9 +174,9 @@
             </StackPanel>
             <local:SettingsPanel x:Name="SettingsPanelUC" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Grid>
-        <!-- FileExplorer Host (hidden by default) -->
-        <local:FileExplorer x:Name="FileExplorerUC" Visibility="Collapsed" Grid.Column="1"/>
         <!-- AiProccess Host (hidden by default) -->
         <local:AiProcess x:Name="AiProccessUC" Visibility="Collapsed" Grid.Column="1"/>
+        <!-- DocumentAiProcess Host (hidden by default) -->
+        <local:DocumentAiProcess x:Name="DocumentAiProcessUC" Visibility="Collapsed" Grid.Column="1"/>
     </Grid>
 </Window>
