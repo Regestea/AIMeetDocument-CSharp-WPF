@@ -69,7 +69,7 @@
             </Grid.Background>
             <StackPanel x:Name="CardsPanel" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
                 <!-- First Card: Scan for new drive -->
-                <Border x:Name="ScanCard" Background="#212735" CornerRadius="32" Padding="64" Margin="0,0,32,0">
+                <Border x:Name="ScanCard" Background="#212735" CornerRadius="32" Padding="64" MinWidth="423" Margin="0,0,32,0">
                     <Border.BorderBrush>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                             <GradientStop Color="#FCE49C" Offset="0.0"/>
@@ -89,8 +89,8 @@
                                 </Canvas>
                             </Viewbox>
                         </Grid>
-                        <TextBlock Text="Scan for new drive" FontSize="36" Foreground="#FCE49C" HorizontalAlignment="Center" Margin="0,0,0,32" FontWeight="Bold"/>
-                        <Button Style="{StaticResource ModernButton}" Content="Scan Now" Click="ScanNow_Click" Cursor="Hand" BorderThickness="2" FontSize="24" Height="64" Width="220">
+                        <TextBlock Text="Select PDF file" FontSize="36" Foreground="#FCE49C" HorizontalAlignment="Center" Margin="0,0,0,32" FontWeight="Bold"/>
+                        <Button Style="{StaticResource ModernButton}" Content="Select File" Click="ScanNow_Click" Cursor="Hand" BorderThickness="2" FontSize="24" Height="64" Width="220">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
@@ -134,7 +134,7 @@
                                 </Canvas>
                             </Viewbox>
                         </Grid>
-                        <TextBlock Text="Select file manually" FontSize="36" Foreground="#FCE49C" HorizontalAlignment="Center" Margin="0,0,0,32" FontWeight="Bold"/>
+                        <TextBlock Text="Select audio file" FontSize="36" Foreground="#FCE49C" HorizontalAlignment="Center" Margin="0,0,0,32" FontWeight="Bold"/>
                         <Button Style="{StaticResource ModernButton}" Content="Select File" Click="SelectFile_Click" Cursor="Hand" BorderThickness="2" FontSize="24" Height="64" Width="220">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">

@@ -24,15 +24,15 @@ public partial class MainWindow : Window
     {
         var dlg = new OpenFileDialog
         {
-            Multiselect = true, // Enable multiple file selection
-            Title = "Select PDF Files",
+            Multiselect = false, // Only allow single file selection
+            Title = "Select PDF File",
             Filter = "PDF Files (*.pdf)|*.pdf"
         };
         
         if (dlg.ShowDialog() == true)
         {
-            var selectedFilePaths = dlg.FileNames.ToList();
-            NavigateToDocumentAiProcess(selectedFilePaths);
+            var selectedFilePath = dlg.FileName;
+            NavigateToDocumentAiProcess(selectedFilePath);
         }
     }
 
@@ -123,13 +123,13 @@ public partial class MainWindow : Window
         }
     }
 
-    public void NavigateToDocumentAiProcess(List<string> pdfFilePaths)
+    public void NavigateToDocumentAiProcess(string pdfFilePath)
     {
         ClearComponents();
         if (DocumentAiProcessUC != null)
         {
             DocumentAiProcessUC.Visibility = Visibility.Visible;
-            DocumentAiProcessUC.SetPdfFilePaths(pdfFilePaths);
+            DocumentAiProcessUC.SetPdfFilePath(pdfFilePath);
         }
     }
 }

@@ -15,6 +15,8 @@ public class FontOptions
     public bool HeaderBold { get; set; } = true;
     public FontStyle DefaultFontStyle { get; set; } = FontStyle.Normal;
     public FontStyle HeaderFontStyle { get; set; } = FontStyle.Normal;
+    
+    public TextDirection TextDirection { get; set; } = TextDirection.LTR;
 
     /// <summary>
     /// Gets the font family name as a string for the specified FontFamily enum
@@ -49,7 +51,7 @@ public class FontOptions
     /// <param name="family">The default/header font family.</param>
     /// <param name="baseSizePt">The base font size in points for normal text.</param>
     /// <returns>A FontOptions instance configured accordingly.</returns>
-    public static FontOptions CreateDefaults(FontFamily family, int baseSizePt)
+    public static FontOptions CreateDefaults(FontFamily family, int baseSizePt,TextDirection textDirection=TextDirection.LTR)
     {
         return new FontOptions
         {
@@ -62,7 +64,8 @@ public class FontOptions
             Header4FontSizePt = baseSizePt,
             HeaderBold = true,
             DefaultFontStyle = FontStyle.Normal,
-            HeaderFontStyle = FontStyle.Normal
+            HeaderFontStyle = FontStyle.Normal,
+            TextDirection = textDirection
         };
     }
 

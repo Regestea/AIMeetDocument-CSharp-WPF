@@ -13,9 +13,8 @@ namespace AIMeetDocument.Services;
 
 public class MarkdownToWordService
 {
-    public void ConvertMarkdownStringToDocx(string markdownContent, string outputFilePath, TextDirection direction = TextDirection.LTR, FontOptions? fontOptions = null)
+    public void ConvertMarkdownStringToDocx(string markdownContent, string outputFilePath, FontOptions fontOptions)
     {
-        fontOptions ??= FontOptions.CreateDefaults();
         string htmlContent = Markdig.Markdown.ToHtml(markdownContent);
 
         using (MemoryStream mem = new MemoryStream())
@@ -26,7 +25,7 @@ public class MarkdownToWordService
                 mainPart.Document = new Document(new Body());
 
                 CreateDocumentStyles(mainPart, fontOptions);
-                SetTextDirection(mainPart.Document.Body, direction);
+                SetTextDirection(mainPart.Document.Body, fontOptions.TextDirection);
 
                 var converter = new HtmlConverter(mainPart);
 

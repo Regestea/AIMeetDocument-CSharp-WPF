@@ -14,16 +14,15 @@ public class MarkdownToPdfService
     /// <param name="outputFilePath">The path where the output PDF will be saved.</param>
     /// <param name="direction">The text direction (LTR or RTL).</param>
     /// <param name="fontOptions">Optional font and size settings.</param>
-    public void ConvertMarkdownStringToPdf(string markdownContent, string outputFilePath, TextDirection direction = TextDirection.LTR, FontOptions? fontOptions = null)
+    public void ConvertMarkdownStringToPdf(string markdownContent, string outputFilePath, FontOptions fontOptions)
     {
-        // Ensure fontOptions is not null
-        fontOptions ??= FontOptions.CreateDefaults();
+
 
         // 1. Convert Markdown to HTML
         string htmlContent = Markdown.ToHtml(markdownContent);
 
         // 2. Generate a professional stylesheet based on options
-        string stylesheet = GetPdfStylesheet(fontOptions, direction);
+        string stylesheet = GetPdfStylesheet(fontOptions, fontOptions.TextDirection);
 
         // 3. Prepend the stylesheet to the HTML content
         htmlContent = stylesheet + htmlContent;

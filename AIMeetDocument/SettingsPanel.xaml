@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="768" d:DesignWidth="1360">
-    <Border Background="#212735" CornerRadius="28" Padding="45" Margin="0,0,0,0" Width="700" Height="500"
+    <Border Background="#212735" CornerRadius="28" Padding="45" Margin="0,0,0,0" Width="700" Height="600"
             d:DesignHeight="700">
         <StackPanel>
             <TextBlock Text="Settings" FontSize="34" Foreground="#FCE49C" HorizontalAlignment="Center"
@@ -90,6 +90,29 @@
                             </Style>
                         </TextBox.Style>
                     </TextBox>
+                    <TextBlock Text="Request Pre Minute:" Foreground="#FCE49C" FontSize="17" />
+                    <TextBox x:Name="GeminiRequestPerMinuteTextBox" Margin="0,6,0,11" FontSize="17" Height="34" PreviewTextInput="NumberOnly_PreviewTextInput">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox">
+                                <Setter Property="BorderThickness" Value="2" />
+                                <Setter Property="BorderBrush" Value="#efa449" />
+                                <Setter Property="Background" Value="#fadc93" />
+                                <Setter Property="Foreground" Value="#212735" />
+                                <Setter Property="Padding" Value="8,2" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="TextBox">
+                                            <Border CornerRadius="12" BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    Background="{TemplateBinding Background}">
+                                                <ScrollViewer x:Name="PART_ContentHost" />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
                     <TextBlock Text="Model:" Foreground="#FCE49C" FontSize="17" />
                     <ComboBox x:Name="GeminiModelComboBox" Margin="0,6,0,11" Height="39" MinWidth="168">
                         <ComboBox.Style>
@@ -127,6 +150,7 @@
                                 </Setter>
                             </Style>
                         </ComboBox.Style>
+                        <ComboBoxItem Content="gemini-2.5-flash-lite" />
                         <ComboBoxItem Content="gemini-2.5-flash" />
                         <ComboBoxItem Content="gemini-2.5-pro" />
                     </ComboBox>

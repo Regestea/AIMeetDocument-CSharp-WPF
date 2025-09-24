@@ -36,10 +36,10 @@ namespace AIMeetDocument
             StartButton.Click += StartButton_Click;
             CancelButton.Click += CancelButton_Click;
             BrowseButton.Click += BrowseButton_Click;
-            
+
             // Load audio detection models
             LoadAudioDetectionModels();
-            
+
             // Load font family options from enum
             LoadFontFamilyOptions();
         }
@@ -86,21 +86,22 @@ namespace AIMeetDocument
                         {
                             case FileType.MD:
                                 var markdownService = new MarkdownToMdFileService();
-                                string outputFilePath = Path.Combine(options.Location, $"{fileName}.md");
+                                string outputFilePath = Path.Combine(options.OutputLocation, $"{fileName}.md");
                                 markdownService.SaveMarkdownToFile(resultContent, outputFilePath);
                                 MessageBox.Show($"Markdown file saved to {outputFilePath}");
                                 break;
                             case FileType.Word:
                                 var wordService = new MarkdownToWordService();
-                                string wordOutputPath = Path.Combine(options.Location, $"{fileName}.docx");
+                                string wordOutputPath = Path.Combine(options.OutputLocation, $"{fileName}.docx");
                                 wordService.ConvertMarkdownStringToDocx(resultContent, wordOutputPath,
-                                    options.TextDirection, options.FontOptions);
+                                    options.FontOptions);
                                 MessageBox.Show($"Word document saved to {wordOutputPath}");
                                 break;
                             case FileType.PDF:
                                 var pdfService = new MarkdownToPdfService();
-                                string pdfOutputPath = Path.Combine(options.Location, $"{fileName}.pdf");
-                                pdfService.ConvertMarkdownStringToPdf(resultContent, pdfOutputPath, options.TextDirection, options.FontOptions);
+                                string pdfOutputPath = Path.Combine(options.OutputLocation, $"{fileName}.pdf");
+                                pdfService.ConvertMarkdownStringToPdf(resultContent, pdfOutputPath,
+                                    options.FontOptions);
                                 MessageBox.Show($"PDF file saved to {pdfOutputPath}");
                                 break;
                         }
@@ -163,16 +164,16 @@ namespace AIMeetDocument
             }
         }
 
-        private async Task<string> StartProcess(GeneratorOptions options, CancellationToken cancellationToken)
+        private async Task<string> StartProcess(AudioGeneratorOptions options, CancellationToken cancellationToken)
         {
             try
             {
                 // Get the selected audio detection model from the combo box
                 string selectedModelPath = options.AudioDetectionModelPath;
-                
+
                 // If no model is selected or the path is empty, use the default model
-                string modelPath = !string.IsNullOrEmpty(selectedModelPath) 
-                    ? selectedModelPath 
+                string modelPath = !string.IsNullOrEmpty(selectedModelPath)
+                    ? selectedModelPath
                     : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LLM", "ggml-large-v3-turbo.bin");
                 var textPartList = new List<string>();
                 var audioCutService = new AudioCutService();
@@ -183,15 +184,17 @@ namespace AIMeetDocument
                     var silenceSeconds = AudioAnalysisService.GetAvgMinThreshold(audioFilePath, cancellationToken);
                     var secondPeaks =
                         AudioAnalysisService.GetSilenceSeconds(audioFilePath, 3, silenceSeconds, cancellationToken);
-                    var audioPartsPath = audioCutService.CutAudioBySeconds(audioFilePath, secondPeaks, cancellationToken);
+                    var audioPartsPath =
+                        audioCutService.CutAudioBySeconds(audioFilePath, secondPeaks, cancellationToken);
                     if (cancellationToken.IsCancellationRequested)
                     {
                         return string.Empty;
                     }
+
                     allAudioPartsPath.AddRange(audioPartsPath);
                 }
 
-                using (var whisperService = new WhisperService(modelPath, options.AudioLanguage))
+                using (var whisperService = new WhisperService(modelPath, options.FileLanguage))
                 {
                     Dispatcher.Invoke(() =>
                     {
@@ -230,8 +233,10 @@ namespace AIMeetDocument
                     return string.Empty;
                 }
 
-                var arrangedList= textPartList.ArrangeSentences(7000, 8000);
-                var systemPrompt = new SystemPromptBuilder(options.AudioSubject, options.OutputLanguage, options.UserPrompt, options.AutoFilter, options.ContentDetails,options.ContentStyle);
+                var arrangedList = textPartList.ArrangeSentences(7000, 8000);
+                var systemPrompt = new SystemPromptBuilder(OperationType.AudioToPamphlet, options.Subject,
+                    options.OutputLanguage, options.UserPrompt, options.AutoFilter, options.ContentDetails,
+                    options.ContentStyle);
                 var settingsService = new SettingsService();
                 var settings = settingsService.GetSettings();
                 var fullText = new StringBuilder();
@@ -251,14 +256,12 @@ namespace AIMeetDocument
                     var gemini = new GeminiService();
                     for (int i = 0; i < arrangedList.Count; i++)
                     {
+                        
                         int remain = arrangedList.Count - i;
-                        int delayMs = 15000; // default for Gemini25Pro
-                        int etaSeconds = 23 * remain; // default for Gemini25Pro
-                        if (settings.Gemini.Model == GeminiModel.Gemini25Flash)
-                        {
-                            delayMs = 8000;
-                            etaSeconds = 15 * remain;
-                        }
+                        int delayMs = (60 / settings.Gemini.RequestPerMinute) * 1000;
+                        int etaSeconds = ((delayMs /1000) + 28) * remain;
+                       
+
                         Dispatcher.Invoke(() => { GeminiProgressText.Text = $"Finish in about {etaSeconds}s"; });
                         var geminiResult =
                             await gemini.GetChatCompletionAsync(systemPrompt.DefaultSystemPrompt + arrangedList[i],
@@ -287,7 +290,7 @@ namespace AIMeetDocument
             }
         }
 
-        private GeneratorOptions BuildGeneratorOptions()
+        private AudioGeneratorOptions BuildGeneratorOptions()
         {
             var audioLanguage = ((ComboBoxItem)AudioLanguageCombo.SelectedItem).Tag.ToString()!;
             var outputLanguage = ((ComboBoxItem)OutputLanguageCombo.SelectedItem).Tag.ToString()!;
@@ -298,7 +301,8 @@ namespace AIMeetDocument
 
             var selectedFontFamily = (Enums.FontFamily)((ComboBoxItem)FontFamilyCombo.SelectedItem).Tag;
             var selectedFontSize = int.Parse(((ComboBoxItem)FontSizeCombo.SelectedItem).Content.ToString()!);
-            var fontOptions = FontOptions.CreateDefaults(selectedFontFamily, selectedFontSize);
+            var textDirection = (outputLanguage is "fa" or "ar") ? TextDirection.RTL : TextDirection.LTR;
+            var fontOptions = FontOptions.CreateDefaults(selectedFontFamily, selectedFontSize, textDirection);
 
             var audioPaths = new List<string>();
             foreach (var name in _fileNameList)
@@ -327,9 +331,9 @@ namespace AIMeetDocument
             };
             var autoFilter = AutoFilterCheckBox.IsChecked == true;
 
-            var options = new GeneratorOptions
+            var options = new AudioGeneratorOptions
             {
-                AudioLanguage = audioLanguage,
+                FileLanguage = audioLanguage,
                 OutputLanguage = outputLanguage,
                 FileType = fileType switch
                 {
@@ -338,13 +342,13 @@ namespace AIMeetDocument
                     _ => FileType.MD
                 },
                 UserPrompt = userPrompt,
-                Location = location,
-                AudioSubject = audioSubject,
+                OutputLocation = location,
+                Subject = audioSubject,
                 ContentStyle = contentStyle,
                 ContentDetails = contentDetails,
                 AutoFilter = autoFilter,
                 FontOptions = fontOptions,
-                TextDirection = (outputLanguage is "fa" or "ar") ? TextDirection.RTL : TextDirection.LTR,
+
                 AudioDetectionModelPath = GetSelectedAudioDetectionModel(),
                 AudioFilePaths = audioPaths
             };
@@ -361,7 +365,7 @@ namespace AIMeetDocument
             {
                 // Get the LLM folder path (next to the executable)
                 string llmFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LLM");
-                
+
                 // Check if the LLM folder exists
                 if (!Directory.Exists(llmFolderPath))
                 {
@@ -412,7 +416,7 @@ namespace AIMeetDocument
             {
                 // Handle any errors gracefully
                 Console.WriteLine($"Error loading audio detection models: {ex.Message}");
-                
+
                 // Add a fallback item
                 AudioDetectionModelCombo.Items.Clear();
                 var errorItem = new ComboBoxItem
@@ -436,6 +440,7 @@ namespace AIMeetDocument
             {
                 return selectedItem.Tag?.ToString() ?? string.Empty;
             }
+
             return string.Empty;
         }
 
@@ -465,7 +470,7 @@ namespace AIMeetDocument
                 {
                     var fontOptions = new FontOptions();
                     string displayName = fontOptions.GetFontFamilyName(fontFamily);
-                    
+
                     var item = new ComboBoxItem
                     {
                         Content = displayName,
@@ -484,7 +489,7 @@ namespace AIMeetDocument
             {
                 // Handle any errors gracefully
                 Console.WriteLine($"Error loading font family options: {ex.Message}");
-                
+
                 // Add fallback items
                 FontFamilyCombo.Items.Clear();
                 var fallbackItems = new[]
@@ -493,12 +498,12 @@ namespace AIMeetDocument
                     new ComboBoxItem { Content = "Arial", Tag = Enums.FontFamily.Arial },
                     new ComboBoxItem { Content = "Times New Roman", Tag = Enums.FontFamily.TimesNewRoman }
                 };
-                
+
                 foreach (var item in fallbackItems)
                 {
                     FontFamilyCombo.Items.Add(item);
                 }
-                
+
                 FontFamilyCombo.SelectedIndex = 0;
             }
         }

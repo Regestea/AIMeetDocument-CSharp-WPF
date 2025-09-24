@@ -30,6 +30,7 @@ public class SettingsService
             {
                 ApiKey = configuration["Gemini:ApiKey"]!,
                 Model = configuration["Gemini:Model"]! , 
+                RequestPerMinute = int.Parse(configuration["Gemini:RequestPerMinute"]!) 
             },
             LLMStudio = new LLMStudioSettings()
             {
@@ -60,7 +61,8 @@ public class SettingsService
             Gemini = new GeminiSettings
             {
                 ApiKey = "your-gemini-api-key",
-                Model = GeminiModel.Gemini25Flash
+                Model = GeminiModel.Gemini25Flash,
+                RequestPerMinute = 2
             }
         };
 

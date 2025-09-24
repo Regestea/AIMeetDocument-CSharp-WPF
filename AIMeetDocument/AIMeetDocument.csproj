@@ -19,6 +19,8 @@
         <PackageReference Include="NAudio" Version="2.2.1" />
         <PackageReference Include="OpenAI" Version="2.1.0" />
         <PackageReference Include="PdfiumViewer" Version="2.13.0" />
+        <PackageReference Include="PdfiumViewer.Native.x86_64.no_v8-no_xfa" Version="2018.4.8.256" />
+        <PackageReference Include="Tesseract" Version="5.2.0" />
         <PackageReference Include="Whisper.net.AllRuntimes" Version="1.8.1" />
         <PackageReference Include="Google_GenerativeAI" Version="2.7.0" />
     </ItemGroup>
@@ -26,6 +28,18 @@
     <ItemGroup>
         <None Remove="Asserts\Background\background-gold.jpeg" />
         <Resource Include="Asserts\Background\background-gold.jpeg" />
+        <None Remove="TesseractData\eng.traineddata" />
+        <Content Include="TesseractData\eng.traineddata">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="TesseractData\fas.traineddata" />
+        <Content Include="TesseractData\fas.traineddata">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="TesseractData\fra.traineddata" />
+        <Content Include="TesseractData\fra.traineddata">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>

@@ -4,6 +4,54 @@ namespace AIMeetDocument.Extensions;
 
 public static class SentenceArrangeExtension
 {
+    
+    public static List<string> ArrangeByPage(this List<string> input, int pagePreRequest)
+    {
+        if (pagePreRequest <= 0)
+        {
+            return input;
+        }
+
+        var result = new List<string>();
+        for (int i = 0; i < input.Count; i += pagePreRequest)
+        {
+            var page = input.Skip(i).Take(pagePreRequest);
+            result.Add(string.Join(" ", page));
+        }
+
+        return result;
+    }
+    
+    public static List<string> ArrangeSentences(this List<string> input, int minLength)
+    {
+        // Handle null or empty input list by returning a new empty list.
+        if (input == null || !input.Any())
+        {
+            return new List<string>();
+        }
+
+        var result = new List<string>();
+
+        foreach (var sentence in input)
+        {
+            // Check if the result list has any items and if the *last* item added is shorter than the minimum length.
+            if (result.Any() && result.Last().Length < minLength)
+            {
+                // If it is, append the current sentence to the last one.
+                // We use the index for a slight performance gain over calling Last() again.
+                result[result.Count - 1] += " " + sentence;
+            }
+            else
+            {
+                // Otherwise, the last sentence was long enough (or the list is empty),
+                // so add the current sentence as a new item.
+                result.Add(sentence);
+            }
+        }
+
+        return result;
+    }
+    
     public static List<string> ArrangeSentences(this List<string> input, int minLength, int maxLength)
     {
         var result = new List<string>();

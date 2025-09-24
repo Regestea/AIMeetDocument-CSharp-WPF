@@ -1,16 +1,24 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Microsoft.Win32;
 using AIMeetDocument.DTOs;
+using AIMeetDocument.Enums;
+using AIMeetDocument.Extensions;
+using AIMeetDocument.Services;
+using AIMeetDocument.StaticValues;
 using PageRange = AIMeetDocument.DTOs.PageRange;
 
 namespace AIMeetDocument;
 
 public partial class DocumentAiProcess : UserControl
 {
-    private List<string> _pdfFilePaths = new List<string>();
+    private string? _pdfFilePath;
     private List<PageRange> _pageRanges = new() { new PageRange() { From = 1, To = 1 } };
+    private CancellationTokenSource? _cts;
+    private Task? _runningTask;
 
     public DocumentAiProcess()
     {
@@ -31,119 +39,237 @@ public partial class DocumentAiProcess : UserControl
         StartButton.Click += StartButton_Click;
         BrowseButton.Click += BrowseButton_Click;
         AddPageRangeButton.Click += AddPageRangeButton_Click;
+
+
+        // Load font family options from enum
+        LoadFontFamilyOptions();
     }
 
-    public void SetPdfFilePaths(List<string> pdfFilePaths)
+    public void SetPdfFilePath(string pdfFilePath)
     {
-        _pdfFilePaths = pdfFilePaths ?? new List<string>();
-
-        if (_pdfFilePaths.Count == 0)
-        {
-            PdfFilesText.Text = "No PDF files selected";
-        }
-        else if (_pdfFilePaths.Count == 1)
-        {
-            PdfFilesText.Text = $"Selected: {System.IO.Path.GetFileName(_pdfFilePaths[0])}";
-        }
-        else
-        {
-            PdfFilesText.Text = $"{_pdfFilePaths.Count} PDF files selected";
-        }
+        _pdfFilePath = pdfFilePath;
+        PdfFilesText.Text = $"Selected: {Path.GetFileName(_pdfFilePath)}";
     }
 
-    private void StartButton_Click(object sender, RoutedEventArgs e)
+    private async void StartButton_Click(object sender, RoutedEventArgs e)
     {
-        if (_pdfFilePaths.Count == 0)
-        {
-            MessageBox.Show("Please select PDF files first.", "No Files Selected", MessageBoxButton.OK,
-                MessageBoxImage.Warning);
-            return;
-        }
-
-        // Get selected values from all form fields
-        var operationType = ((ComboBoxItem)OperationTypeCombo.SelectedItem)?.Tag?.ToString() ?? "none";
-        var outputLanguage = ((ComboBoxItem)OutputLanguageCombo.SelectedItem)?.Tag?.ToString() ?? "en";
-        var customPrompt = CustomPromptTextBox.Text?.Trim() ?? "";
-        var pdfLanguage = ((ComboBoxItem)PdfLanguageCombo.SelectedItem)?.Tag?.ToString() ?? "en";
-        var fontFamily = ((ComboBoxItem)FontFamilyCombo.SelectedItem)?.Content?.ToString() ?? "Arial";
-        var contentStyle = ((ComboBoxItem)ContentStyleCombo.SelectedItem)?.Tag?.ToString() ?? "formal";
-        var fontSize = ((ComboBoxItem)FontSizeCombo.SelectedItem)?.Content?.ToString() ?? "12";
-        var fileType = ((ComboBoxItem)FileTypeCombo.SelectedItem)?.Content?.ToString() ?? "Word";
-        var saveLocation = LocationTextBox.Text?.Trim() ?? "";
-
-        // Get page ranges
-        var pageRanges = GetPageRanges();
-
         // Show loading panel
         ActionPanel.Visibility = Visibility.Collapsed;
         LoadingPanel.Visibility = Visibility.Visible;
         StartButton.IsEnabled = false;
+        var options = BuildDocumentGeneratorOptions();
 
-        // Validate required fields
-        if (string.IsNullOrEmpty(saveLocation))
+        _cts = new CancellationTokenSource();
+        _runningTask = Task.Run(async () =>
         {
-            MessageBox.Show("Please select a save location.", "Save Location Required", MessageBoxButton.OK,
-                MessageBoxImage.Warning);
-            ActionPanel.Visibility = Visibility.Visible;
-            LoadingPanel.Visibility = Visibility.Collapsed;
-            StartButton.IsEnabled = true;
-            return;
-        }
+            var resultContent = await StartProcess(options, _cts.Token);
+            Dispatcher.Invoke(() =>
+            {
+                if (_cts.IsCancellationRequested)
+                {
+                    ActionPanel.Visibility = Visibility.Visible;
+                    LoadingPanel.Visibility = Visibility.Collapsed;
+                    StartButton.IsEnabled = true;
+                    return;
+                }
 
-        // Log the selected options for debugging
-        System.Diagnostics.Debug.WriteLine($"Processing with options:");
-        System.Diagnostics.Debug.WriteLine($"- Operation Type: {operationType}");
-        System.Diagnostics.Debug.WriteLine($"- Output Language: {outputLanguage}");
-        System.Diagnostics.Debug.WriteLine($"- Custom Prompt: {customPrompt}");
-        System.Diagnostics.Debug.WriteLine($"- PDF Language: {pdfLanguage}");
-        System.Diagnostics.Debug.WriteLine($"- Font Family: {fontFamily}");
-        System.Diagnostics.Debug.WriteLine($"- Content Style: {contentStyle}");
-        System.Diagnostics.Debug.WriteLine($"- Font Size: {fontSize}");
-        System.Diagnostics.Debug.WriteLine($"- File Type: {fileType}");
-        System.Diagnostics.Debug.WriteLine($"- Page Ranges: {pageRanges.Count} ranges");
-        foreach (var range in pageRanges)
-        {
-            System.Diagnostics.Debug.WriteLine($"  - Pages {range.From} to {range.To}");
-        }
+                if (!string.IsNullOrEmpty(resultContent))
+                {
+                    var fileName = Guid.NewGuid();
+                    switch (options.FileType)
+                    {
+                        case FileType.MD:
+                            var markdownService = new MarkdownToMdFileService();
+                            string outputFilePath = Path.Combine(options.OutputLocation, $"{fileName}.md");
+                            markdownService.SaveMarkdownToFile(resultContent, outputFilePath);
+                            MessageBox.Show($"Markdown file saved to {outputFilePath}");
+                            break;
+                        case FileType.Word:
+                            var wordService = new MarkdownToWordService();
+                            string wordOutputPath = Path.Combine(options.OutputLocation, $"{fileName}.docx");
+                            wordService.ConvertMarkdownStringToDocx(resultContent, wordOutputPath, options.FontOptions);
+                            MessageBox.Show($"Word document saved to {wordOutputPath}");
+                            break;
+                        case FileType.PDF:
+                            var pdfService = new MarkdownToPdfService();
+                            string pdfOutputPath = Path.Combine(options.OutputLocation, $"{fileName}.pdf");
+                            pdfService.ConvertMarkdownStringToPdf(resultContent, pdfOutputPath, options.FontOptions);
+                            MessageBox.Show($"PDF file saved to {pdfOutputPath}");
+                            break;
+                    }
+                }
 
-        System.Diagnostics.Debug.WriteLine($"- Save Location: {saveLocation}");
+                ActionPanel.Visibility = Visibility.Visible;
+                LoadingPanel.Visibility = Visibility.Collapsed;
+                StartButton.IsEnabled = true;
+            });
+        });
+        await _runningTask;
 
-        // TODO: Implement PDF processing logic here
-        // For now, just simulate processing
-        Processing();
+        ActionPanel.Visibility = Visibility.Visible;
+        LoadingPanel.Visibility = Visibility.Collapsed;
+        StartButton.IsEnabled = true;
     }
 
-    private async void Processing()
+    private DocumentGeneratorOptions BuildDocumentGeneratorOptions()
     {
+        var operationTypeTag = ((ComboBoxItem)OperationTypeCombo.SelectedItem)?.Tag?.ToString() ?? "none";
+        var operationType = operationTypeTag switch
+        {
+            "Pamphlet" => OperationType.Pamphlet,
+            "Summerize" => OperationType.Summerize,
+            "Remake" => OperationType.Remake,
+            "QuestionAnswer" => OperationType.QuestionAnswer,
+            _ => OperationType.None
+        };
+        var outputLanguage = ((ComboBoxItem)OutputLanguageCombo.SelectedItem).Tag.ToString();
+        var pdfLanguage = ((ComboBoxItem)PdfLanguageCombo.SelectedItem).Tag.ToString();
+        var userPrompt = CustomPromptTextBox.Text.Trim();
+        var fontFamily = (Enums.FontFamily)((ComboBoxItem)FontFamilyCombo.SelectedItem).Tag;
+        var fontSize = int.TryParse(((ComboBoxItem)FontSizeCombo.SelectedItem).Content.ToString(), out var size)
+            ? size
+            : 12;
+        var fileType = ((ComboBoxItem)FileTypeCombo.SelectedItem).Content.ToString();
+        var saveLocation = LocationTextBox.Text.Trim();
+        var pageRanges = GetPageRanges();
+        var pdfFilePath = _pdfFilePath;
+        var textDirection = (outputLanguage is "fa" or "ar") ? TextDirection.RTL : TextDirection.LTR;
+        var fontOptions = FontOptions.CreateDefaults(fontFamily, fontSize, textDirection);
+        var contentStyleTag = ((ComboBoxItem)ContentStyleCombo.SelectedItem).Tag.ToString();
+        var pagePreRequestTag = ((ComboBoxItem)PagePreRequestComboBox.SelectedItem).Tag.ToString();
+        PagePreRequest requestPrePage;
+        if (int.TryParse(pagePreRequestTag, out int intValue))
+        {
+            requestPrePage = (PagePreRequest)intValue;
+        }
+        else
+        {
+            requestPrePage = PagePreRequest.Auto;
+        }
 
-        var test = _pageRanges;
-        // try
-        // {
-        //     ProgressBar.Visibility = Visibility.Visible;
-        //     ProgressText.Visibility = Visibility.Visible;
-        //     
-        //     for (int i = 0; i <= 100; i += 10)
-        //     {
-        //         ProgressBar.Value = i;
-        //         ProgressText.Text = $"{i}%";
-        //         await Task.Delay(200); // Simulate processing time
-        //     }
-        //     
-        //     MessageBox.Show("PDF processing completed successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-        // }
-        // catch (Exception ex)
-        // {
-        //     MessageBox.Show($"Error processing PDFs: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-        // }
-        // finally
-        // {
-        //     // Reset UI
-        //     ActionPanel.Visibility = Visibility.Visible;
-        //     LoadingPanel.Visibility = Visibility.Collapsed;
-        //     ProgressBar.Visibility = Visibility.Collapsed;
-        //     ProgressText.Visibility = Visibility.Collapsed;
-        //     StartButton.IsEnabled = true;
-        // }
+        var contentDetailsText = ((ComboBoxItem)ContentDetailsCombo.SelectedItem).Content.ToString();
+        var contentStyle = contentStyleTag switch
+        {
+            "formal" => ContentStyle.Formal,
+            "informal" => ContentStyle.Informal,
+            _ => ContentStyle.None
+        };
+        var contentDetails = contentDetailsText switch
+        {
+            "Summary" => ContentDetails.Summary,
+            "Maximum details" => ContentDetails.MaximumDetails,
+            _ => ContentDetails.Regular
+        };
+        var pdfSubject = AudioSubjectTextBox.Text.Trim();
+        return new DocumentGeneratorOptions
+        {
+            OperationType = operationType,
+            OutputLanguage = outputLanguage,
+            FileLanguage = pdfLanguage,
+            UserPrompt = userPrompt,
+            ContentStyle = contentStyle,
+            ContentDetails = contentDetails,
+            FileType = fileType switch
+            {
+                "Word" => FileType.Word,
+                "PDF" => FileType.PDF,
+                _ => FileType.MD
+            },
+            OutputLocation = saveLocation,
+            PageRanges = pageRanges,
+            PdfFilePath = pdfFilePath,
+            FontOptions = fontOptions,
+            Subject = pdfSubject,
+            PagePreRequest = requestPrePage
+        };
+    }
+
+    private async Task<string> StartProcess(DocumentGeneratorOptions options, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var systemPrompt = new SystemPromptBuilder(
+                options.OperationType,
+                options.Subject,
+                options.OutputLanguage,
+                options.UserPrompt,
+                false,
+                options.ContentDetails,
+                options.ContentStyle
+            );
+            Dispatcher.Invoke((Action)(() => { ProgressText.Visibility = Visibility.Visible; }));
+            using var pdfToImageService = new PdfPageExtractorService();
+            var imageToTextService = new ImageTextExtractorService();
+            Dispatcher.Invoke((Action)(() => { ProgressText.Text = $"Converting PDF to images....."; }));
+            var imageList = pdfToImageService.ExtractPages(_pdfFilePath, _pageRanges);
+            Dispatcher.Invoke((Action)(() => { ProgressText.Text = $"Detecting text form images....."; }));
+            var textList = imageToTextService
+                .ReadTextFromImage(imageList, ImageToTextLanguage.eng);
+
+            List<string> arrangedList;
+            if (options.PagePreRequest == PagePreRequest.Auto)
+            {
+                arrangedList = textList
+                    .ArrangeSentences(6000);
+            }
+            else
+            {
+                arrangedList = textList
+                    .ArrangeByPage((int)options.PagePreRequest);
+            }
+
+
+            var settingsService = new SettingsService();
+            var settings = settingsService.GetSettings();
+            var fullText = new StringBuilder();
+            if (settings.DefaultAI == DefaultAI.LLMStudio)
+            {
+                Dispatcher.Invoke((Action)(() =>
+                {
+                    ProgressText.Text = $"Sending requests to Local LLM (this may take a while) .....";
+                }));
+                var llm = new LocalLanguageModelService();
+                foreach (var text in arrangedList)
+                {
+                    var llmResult =
+                        await llm.GetChatCompletionAsync(systemPrompt.DefaultSystemPrompt, text, cancellationToken);
+                    fullText.Append(llmResult);
+                }
+            }
+            else
+            {
+                Dispatcher.Invoke((Action)(() => { ProgressText.Text = $"Sending requests to Gemini api ....."; }));
+                var gemini = new GeminiService();
+                for (int i = 0; i < arrangedList.Count; i++)
+                {
+                    int remain = arrangedList.Count - i;
+                    int delayMs = (60 / settings.Gemini.RequestPerMinute) * 1000;
+                    int etaSeconds = ((delayMs /1000) + 28) * remain;
+
+                    Dispatcher.Invoke((Action)(() => { ProgressText.Text = $"Finish in about {etaSeconds}s"; }));
+                    var geminiResult =
+                        await gemini.GetChatCompletionAsync(systemPrompt.DefaultSystemPrompt + arrangedList[i],
+                            cancellationToken);
+                    fullText.Append(geminiResult);
+                    await Task.Delay(delayMs, cancellationToken);
+                }
+
+                Dispatcher.Invoke((Action)(() => { ProgressText.Visibility = Visibility.Collapsed; }));
+            }
+
+            var finalText = fullText.ToString();
+            return finalText;
+        }
+        catch (TaskCanceledException)
+        {
+            Console.WriteLine("canceled task exeption");
+            return string.Empty;
+        }
+        catch (OperationCanceledException)
+        {
+            Console.WriteLine("cancel operation exeption");
+            return string.Empty;
+        }
     }
 
     private void BrowseButton_Click(object sender, RoutedEventArgs e)
@@ -155,10 +281,9 @@ public partial class DocumentAiProcess : UserControl
             ValidateNames = false,
             FileName = "Select this folder"
         };
-
         if (dialog.ShowDialog() == true)
         {
-            var path = System.IO.Path.GetDirectoryName(dialog.FileName);
+            var path = Path.GetDirectoryName(dialog.FileName);
             LocationTextBox.Text = path;
         }
     }
@@ -197,19 +322,33 @@ public partial class DocumentAiProcess : UserControl
 
     private void UpdateRowIndices(StackPanel row, int newIndex)
     {
-        // Update the event handlers for the textboxes in this row
         var textBoxes = row.Children.OfType<TextBox>().ToList();
         if (textBoxes.Count >= 2)
         {
             var fromTextBox = textBoxes[0];
             var toTextBox = textBoxes[1];
+            fromTextBox.TextChanged -= FromTextBox_TextChanged;
+            toTextBox.TextChanged -= ToTextBox_TextChanged;
+            fromTextBox.TextChanged += FromTextBox_TextChanged;
+            toTextBox.TextChanged += ToTextBox_TextChanged;
+        }
+    }
 
-            // Remove old handlers and add new ones
-            fromTextBox.TextChanged -= (s, e) => { };
-            toTextBox.TextChanged -= (s, e) => { };
+    private void FromTextBox_TextChanged(object? sender, TextChangedEventArgs e)
+    {
+        if (sender is TextBox fromTextBox)
+        {
+            int index = PageRangeContainer.Children.IndexOf(fromTextBox.Parent as UIElement);
+            UpdatePageRangeFrom(index, fromTextBox.Text);
+        }
+    }
 
-            fromTextBox.TextChanged += (s, e) => UpdatePageRangeFrom(newIndex, fromTextBox.Text);
-            toTextBox.TextChanged += (s, e) => UpdatePageRangeTo(newIndex, toTextBox.Text);
+    private void ToTextBox_TextChanged(object? sender, TextChangedEventArgs e)
+    {
+        if (sender is TextBox toTextBox)
+        {
+            int index = PageRangeContainer.Children.IndexOf(toTextBox.Parent as UIElement);
+            UpdatePageRangeTo(index, toTextBox.Text);
         }
     }
 
@@ -225,6 +364,7 @@ public partial class DocumentAiProcess : UserControl
         {
             from = parsedFrom;
         }
+
         if (index < _pageRanges.Count)
         {
             _pageRanges[index].From = from;
@@ -238,6 +378,7 @@ public partial class DocumentAiProcess : UserControl
         {
             to = parsedTo;
         }
+
         if (index < _pageRanges.Count)
         {
             _pageRanges[index].To = to;
@@ -330,6 +471,62 @@ public partial class DocumentAiProcess : UserControl
         row.Children.Add(removeButton);
 
         return row;
+    }
+
+    /// <summary>
+    /// Loads font family options from the FontFamily enum
+    /// </summary>
+    private void LoadFontFamilyOptions()
+    {
+        try
+        {
+            // Clear existing items
+            FontFamilyCombo.Items.Clear();
+
+            // Get all values from the FontFamily enum
+            var fontFamilyValues = Enum.GetValues<FontFamily>();
+
+            // Add each font family as a ComboBoxItem
+            foreach (var fontFamily in fontFamilyValues)
+            {
+                var fontOptions = new FontOptions();
+                string displayName = fontOptions.GetFontFamilyName(fontFamily);
+
+                var item = new ComboBoxItem
+                {
+                    Content = displayName,
+                    Tag = fontFamily // Store the enum value in Tag
+                };
+                FontFamilyCombo.Items.Add(item);
+            }
+
+            // Select Calibri by default (index 0)
+            if (FontFamilyCombo.Items.Count > 0)
+            {
+                FontFamilyCombo.SelectedIndex = 0;
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle any errors gracefully
+            Console.WriteLine($"Error loading font family options: {ex.Message}");
+
+            // Add fallback items
+            FontFamilyCombo.Items.Clear();
+            var fallbackItems = new[]
+            {
+                new ComboBoxItem { Content = "Calibri", Tag = Enums.FontFamily.Calibri },
+                new ComboBoxItem { Content = "Arial", Tag = Enums.FontFamily.Arial },
+                new ComboBoxItem { Content = "Times New Roman", Tag = Enums.FontFamily.TimesNewRoman }
+            };
+
+            foreach (var item in fallbackItems)
+            {
+                FontFamilyCombo.Items.Add(item);
+            }
+
+            FontFamilyCombo.SelectedIndex = 0;
+        }
     }
 
     private ControlTemplate CreateTextBoxTemplate()
