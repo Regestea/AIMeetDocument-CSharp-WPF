@@ -21,6 +21,8 @@ public partial class DocumentAiProcess : UserControl
     private CancellationTokenSource? _cts;
     private Task? _runningTask;
 
+    private const int MaxPageRangeRows = 20; // Limit to prevent resource exhaustion
+
     public DocumentAiProcess()
     {
         InitializeComponent();
@@ -316,6 +318,11 @@ public partial class DocumentAiProcess : UserControl
 
     private void AddPageRangeRow()
     {
+        if (PageRangeContainer.Children.Count >= MaxPageRangeRows)
+        {
+            MessageBox.Show($"You can only add up to {MaxPageRangeRows} page ranges.", "Limit reached", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
         var pageRange = new PageRange { From = 1, To = 1 };
         _pageRanges.Add(pageRange);
 
