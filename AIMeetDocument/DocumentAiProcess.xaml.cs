@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -240,17 +241,37 @@ public partial class DocumentAiProcess : UserControl
             {
                 Dispatcher.Invoke((Action)(() => { ProgressText.Text = $"Sending requests to Gemini api ....."; }));
                 var gemini = new GeminiService();
+                int requestDuration = 0;
                 for (int i = 0; i < arrangedList.Count; i++)
                 {
-                    int remain = arrangedList.Count - i;
-                    int delayMs = (60 / settings.Gemini.RequestPerMinute) * 1000;
-                    int etaSeconds = ((delayMs /1000) + 28) * remain;
+                    int delayMs = 15000;
+                    if (requestDuration != 0)
+                    {
+                        int remain = arrangedList.Count - i;
+                        delayMs = (60 / settings.Gemini.RequestPerMinute) * 1000;
+                        int etaSeconds = ((delayMs / 1000) + requestDuration) * remain;
 
-                    Dispatcher.Invoke((Action)(() => { ProgressText.Text = $"Finish in about {etaSeconds}s"; }));
+                        Dispatcher.Invoke((Action)(() => { ProgressText.Text = $"{i} of {arrangedList.Count}, Finish in about {etaSeconds}s"; }));
+                    }
+                    
+                    var sw = new Stopwatch();
+                    if (requestDuration ==0)
+                    {
+                        sw.Start();
+                    }
+                    
+
                     var geminiResult =
                         await gemini.GetChatCompletionAsync(systemPrompt.DefaultSystemPrompt + arrangedList[i],
                             cancellationToken);
                     fullText.Append(geminiResult);
+                    
+                    if (requestDuration == 0)
+                    {
+                        sw.Stop();
+                        requestDuration = (int)sw.Elapsed.TotalSeconds;
+                    }
+                    
                     await Task.Delay(delayMs, cancellationToken);
                 }
 
