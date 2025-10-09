@@ -16,6 +16,7 @@ public class SystemPromptBuilder
                                                               your task is to do all things that user ask you to do. Follow these rules precisely:
                                                               * **Final Output:** The entire response must be the content itself, formatted in Markdown. Do not include any introductory phrases like "Here is the content."
                                                               the pages number are ok but if you saw unrelated numbers don't include them in output 
+                                                              also the keep the content as it is if some part was heading in the response should be heading and also do the same for other parts
                                                               """,
                                         OperationType.AudioToPamphlet => $"""
                                                                           Your task is to transform a conversation transcript into an informative pamphlet. Follow these rules precisely:
